@@ -51,46 +51,20 @@ function ReviewDecision() {
   };
 
   const simulateDecision = () => {
-    // Simulate different decision outcomes
-    const outcomes = [
-      {
-        type: 'approved',
-        title: 'Application Approved!',
-        message: 'Congratulations! Your credit application has been approved.',
-        details: 'You will receive your credit agreement shortly. Please review and sign to complete the process.',
-        nextSteps: [
-          'Review the credit agreement terms',
-          'Provide electronic signature',
-          'Funds will be disbursed within 2-3 business days'
-        ]
-      },
-      {
-        type: 'pending',
-        title: 'Application Under Review',
-        message: 'Your application is currently being reviewed by our credit team.',
-        details: 'We may need additional information or documentation. Expected decision within 15 working days.',
-        nextSteps: [
-          'We will contact you if additional information is needed',
-          'Check your email regularly for updates',
-          'Decision notification will be sent within 15 working days'
-        ]
-      },
-      {
-        type: 'declined',
-        title: 'Application Declined',
-        message: 'Unfortunately, we cannot approve your credit application at this time.',
-        details: 'This decision is based on our current lending criteria. You have the right to appeal this decision.',
-        nextSteps: [
-          'You will receive a detailed explanation by post',
-          'You can appeal this decision within 21 days',
-          'Contact our customer service for more information'
-        ]
-      }
-    ];
+    // Always return approved outcome for demo purposes
+    const approvedOutcome = {
+      type: 'approved',
+      title: 'Application Approved!',
+      message: 'Congratulations! Your credit application has been approved.',
+      details: 'You will receive your credit agreement shortly. Please review and sign to complete the process.',
+      nextSteps: [
+        'Review the credit agreement terms',
+        'Provide electronic signature',
+        'Funds will be disbursed within 2-3 business days'
+      ]
+    };
 
-    // Simulate decision based on some criteria (random for demo)
-    const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    return randomOutcome;
+    return approvedOutcome;
   };
 
   const handleSubmit = async () => {
