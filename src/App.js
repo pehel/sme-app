@@ -1,19 +1,24 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import { ApplicationProvider } from './context/ApplicationContext';
 import Layout from './components/Layout/Layout';
 import AIAssistant from './components/AIAssistant';
-import ProductSelection from './components/Steps/ProductSelection';
-import ApplicantTypeSelection from './components/Steps/ApplicantTypeSelection';
+import ProductSelectionEnhanced from './components/Steps/ProductSelectionEnhanced';
+import ApplicantTypeSelectionEnhanced from './components/Steps/ApplicantTypeSelectionEnhanced';
 import CustomerDetailsAI from './components/Steps/CustomerDetailsAI';
-import ApplicationDetails from './components/Steps/ApplicationDetails';
-import DocumentUploadAI from './components/Steps/DocumentUploadAI';
+import ApplicationDetailsEnhanced from './components/Steps/ApplicationDetailsEnhanced';
+import DocumentUploadSimplified from './components/Steps/DocumentUploadSimplified';
 import MultiPartyVerificationWrapper from './components/Steps/MultiPartyVerificationWrapper';
 import ReviewDecision from './components/Steps/ReviewDecision';
 import CreditAgreement from './components/Steps/CreditAgreement';
 import Completion from './components/Steps/Completion';
 
-// Component to get current step for AI Assistant
+// Component to get current step for Banking Assistant
 function AppContent() {
   const location = useLocation();
   const getCurrentStep = () => {
@@ -24,12 +29,21 @@ function AppContent() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<ProductSelection />} />
-        <Route path="/applicant-type" element={<ApplicantTypeSelection />} />
+        <Route path="/" element={<ProductSelectionEnhanced />} />
+        <Route
+          path="/applicant-type"
+          element={<ApplicantTypeSelectionEnhanced />}
+        />
         <Route path="/customer-details" element={<CustomerDetailsAI />} />
-        <Route path="/application-details" element={<ApplicationDetails />} />
-        <Route path="/document-upload" element={<DocumentUploadAI />} />
-        <Route path="/multi-party-verification" element={<MultiPartyVerificationWrapper />} />
+        <Route
+          path="/application-details"
+          element={<ApplicationDetailsEnhanced />}
+        />
+        <Route path="/document-upload" element={<DocumentUploadSimplified />} />
+        <Route
+          path="/multi-party-verification"
+          element={<MultiPartyVerificationWrapper />}
+        />
         <Route path="/review-decision" element={<ReviewDecision />} />
         <Route path="/credit-agreement" element={<CreditAgreement />} />
         <Route path="/completion" element={<Completion />} />

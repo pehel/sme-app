@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApplication, applicationActions } from '../../context/ApplicationContext';
+import aiService from '../../services/aiService';
 import { 
   CurrencyEuroIcon,
   BuildingOfficeIcon,
   CreditCardIcon,
-  SparklesIcon
+  SparklesIcon,
+  ChatBubbleLeftRightIcon,
+  PaperAirplaneIcon,
+  RocketLaunchIcon
 } from '@heroicons/react/24/outline';
 
 const products = [

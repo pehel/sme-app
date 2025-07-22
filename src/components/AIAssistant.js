@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  SparklesIcon, 
+import {
+  SparklesIcon,
   ChatBubbleLeftRightIcon,
   XMarkIcon,
   LightBulbIcon,
   DocumentMagnifyingGlassIcon,
-  ArrowUpIcon
+  ArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import aiService from '../services/aiService';
 
@@ -22,21 +22,23 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
         setIsLoading(true);
         try {
           const help = await aiService.getContextualHelp(currentStep);
-          
-          setMessages([{
-            id: 1,
-            type: 'ai',
-            content: help.message,
-            suggestions: help.suggestions,
-            timestamp: new Date()
-          }]);
+
+          setMessages([
+            {
+              id: 1,
+              type: 'ai',
+              content: help.message,
+              suggestions: help.suggestions,
+              timestamp: new Date(),
+            },
+          ]);
         } catch (error) {
           console.error('Failed to load contextual help:', error);
         }
         setIsLoading(false);
       }
     };
-    
+
     loadHelp();
   }, [currentStep, messages.length]);
 
@@ -47,10 +49,10 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
       id: Date.now(),
       type: 'user',
       content: userInput,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setUserInput('');
     setIsLoading(true);
 
@@ -60,21 +62,25 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
         id: Date.now() + 1,
         type: 'ai',
         content: generateAIResponse(userInput),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
       setIsLoading(false);
     }, 1000);
   };
 
   const generateAIResponse = (query) => {
     const responses = {
-      "help": "I'm here to help you through your credit application. I can analyze documents, suggest form data, and answer questions about the process.",
-      "documents": "I can automatically extract information from your bank statements, identity documents, and business certificates. Just upload them and I'll fill in the details for you.",
-      "amount": "Based on your cash flow analysis, I recommend a loan amount between €50,000 - €75,000. This ensures comfortable repayment while meeting your business needs.",
-      "time": "With AI automation, your application can be processed instantly. I'm analyzing your data in real-time to speed up the decision process.",
-      "requirements": "For your business type, you'll need: bank statements (6 months), identity documents for all directors, Certificate of Incorporation, and recent financial statements.",
-      "default": "I can help you with document analysis, form filling, risk assessment, and application guidance. What specific area would you like assistance with?"
+      help: "I'm here to help you through your credit application. I can analyze documents, suggest form data, and answer questions about the process.",
+      documents:
+        "I can automatically extract information from your bank statements, identity documents, and business certificates. Just upload them and I'll fill in the details for you.",
+      amount:
+        'Based on your cash flow analysis, I recommend a loan amount between €50,000 - €75,000. This ensures comfortable repayment while meeting your business needs.',
+      time: "With AI automation, your application can be processed instantly. I'm analyzing your data in real-time to speed up the decision process.",
+      requirements:
+        "For your business type, you'll need: bank statements (6 months), identity documents for all directors, Certificate of Incorporation, and recent financial statements.",
+      default:
+        'I can help you with document analysis, form filling, risk assessment, and application guidance. What specific area would you like assistance with?',
     };
 
     const lowercaseQuery = query.toLowerCase();
@@ -91,24 +97,24 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
       id: Date.now(),
       type: 'user',
       content: suggestion,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     const aiResponse = {
       id: Date.now() + 1,
       type: 'ai',
       content: generateAIResponse(suggestion),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, suggestionMessage, aiResponse]);
+    setMessages((prev) => [...prev, suggestionMessage, aiResponse]);
   };
 
   if (!isVisible) return null;
 
   return (
     <>
-      {/* AI Assistant Toggle Button */}
+      {/* Banking Assistant Toggle Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -121,7 +127,7 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
         </button>
       )}
 
-      {/* AI Assistant Panel */}
+      {/* Banking Assistant Panel */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
           {/* Header */}
@@ -151,7 +157,12 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
                 <span className="text-gray-600">AI Active</span>
               </div>
               <span className="text-gray-400">•</span>
-              <span className="text-gray-600">Step: {currentStep ? currentStep.replace('-', ' ') : 'Getting Started'}</span>
+              <span className="text-gray-600">
+                Step:{' '}
+                {currentStep
+                  ? currentStep.replace('-', ' ')
+                  : 'Getting Started'}
+              </span>
             </div>
           </div>
 
@@ -160,7 +171,9 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  message.type === 'user' ? 'justify-end' : 'justify-start'
+                }`}
               >
                 <div
                   className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
@@ -196,8 +209,14 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
                   <div className="flex items-center space-x-1">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: '0.1s' }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: '0.2s' }}
+                      ></div>
                     </div>
                     <span>AI is thinking...</span>
                   </div>
@@ -229,21 +248,27 @@ function AIAssistant({ currentStep, isVisible = true, onClose }) {
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-2 mt-3">
               <button
-                onClick={() => handleSuggestionClick("What documents do I need?")}
+                onClick={() =>
+                  handleSuggestionClick('What documents do I need?')
+                }
                 className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 transition-colors"
               >
                 <DocumentMagnifyingGlassIcon className="h-3 w-3 inline mr-1" />
                 Documents needed
               </button>
               <button
-                onClick={() => handleSuggestionClick("Help me with loan amount")}
+                onClick={() =>
+                  handleSuggestionClick('Help me with loan amount')
+                }
                 className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 transition-colors"
               >
                 <LightBulbIcon className="h-3 w-3 inline mr-1" />
                 Loan guidance
               </button>
               <button
-                onClick={() => handleSuggestionClick("How long does this take?")}
+                onClick={() =>
+                  handleSuggestionClick('How long does this take?')
+                }
                 className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 transition-colors"
               >
                 <ChatBubbleLeftRightIcon className="h-3 w-3 inline mr-1" />

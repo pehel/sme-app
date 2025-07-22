@@ -135,13 +135,18 @@ function applicationReducer(state, action) {
     
     // AI-specific cases
     case actionTypes.UPDATE_DOCUMENTS:
-      return {
+      console.log('UPDATE_DOCUMENTS action received:', action.payload);
+      const newState = {
         ...state,
-        uploadedDocuments: action.payload.documents || [],
-        documents: action.payload.documents || [],
+        uploadedDocuments: action.payload.documents || action.payload,
+        documents: Array.isArray(action.payload.documents) ? action.payload.documents : 
+                  typeof action.payload.documents === 'object' ? Object.values(action.payload.documents) : 
+                  Array.isArray(action.payload) ? action.payload : [],
         aiAnalysis: action.payload.aiAnalysis,
         extractedData: action.payload.extractedData
       };
+      console.log('New state after UPDATE_DOCUMENTS:', newState);
+      return newState;
     
     case actionTypes.UPDATE_APPLICATION_FROM_AI:
       return {

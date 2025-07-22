@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApplication, applicationActions } from '../../context/ApplicationContext';
+import {
+  useApplication,
+  applicationActions,
+} from '../../context/ApplicationContext';
 import aiService from '../../services/aiService';
 import BusinessInfoForm from '../Forms/BusinessInfoForm';
 import PersonalInfoForm from '../Forms/PersonalInfoForm';
-import { 
+import {
   SparklesIcon,
   MagnifyingGlassIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 
 function CustomerDetailsAI() {
@@ -32,17 +35,20 @@ function CustomerDetailsAI() {
   // AI-powered company lookup
   const handleCompanyLookup = async (registrationNumber) => {
     if (!registrationNumber || registrationNumber.length < 5) return;
-    
+
     setIsLookingUp(true);
     try {
-      const companyData = await aiService.extractBusinessInfo(registrationNumber);
+      const companyData = await aiService.extractBusinessInfo(
+        registrationNumber
+      );
       setLookupResults(companyData);
       setShowSuggestions(true);
     } catch (error) {
       console.error('Company lookup failed:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        lookup: 'Failed to retrieve company information. Please enter details manually.' 
+      setErrors((prev) => ({
+        ...prev,
+        lookup:
+          'Failed to retrieve company information. Please enter details manually.',
       }));
     }
     setIsLookingUp(false);
@@ -54,31 +60,47 @@ function CustomerDetailsAI() {
 
     const updatedBusinessInfo = {
       ...businessInfo,
+      // Core company details
       businessName: lookupResults.companyName,
       registrationNumber: lookupResults.registrationNumber,
       registeredAddress: `${lookupResults.address.street}, ${lookupResults.address.city}, ${lookupResults.address.county}, ${lookupResults.address.eircode}`,
       incorporationDate: lookupResults.incorporationDate,
       companyType: lookupResults.companyType,
+      // Enhanced AI-extracted details
+      phone: lookupResults.phone,
+      email: lookupResults.email,
+      website: lookupResults.website,
       vatNumber: lookupResults.vatNumber,
+      taxReference: lookupResults.taxReference,
+      croNumber: lookupResults.croNumber,
+      yearEstablished: lookupResults.yearEstablished,
       industry: lookupResults.industry,
       sicCode: lookupResults.sicCode,
       employeeCount: lookupResults.employeeCount,
-      aiExtracted: true
+      annualTurnover: lookupResults.annualTurnover,
+      bankAccount: lookupResults.bankDetails?.accountNumber,
+      aiExtracted: true,
     };
 
     // Extract director information for personal info
     const updatedPersonalInfo = { ...personalInfo };
     if (lookupResults.directors && lookupResults.directors.length > 0) {
       if (state.applicantType === 'limited-company') {
-        updatedPersonalInfo.beneficialOwners = lookupResults.directors.map(director => ({
-          fullName: director.name,
-          dateOfBirth: director.dateOfBirth,
-          nationality: director.nationality,
-          position: director.position,
-          isDirector: true,
-          percentage: lookupResults.shareholders?.find(s => s.name === director.name)?.percentage || 0,
-          aiExtracted: true
-        }));
+        updatedPersonalInfo.beneficialOwners = lookupResults.directors.map(
+          (director) => ({
+            fullName: director.name,
+            dateOfBirth: director.dateOfBirth,
+            nationality: director.nationality,
+            position: director.position,
+            email: director.email || '',
+            phone: director.phone || '',
+            isDirector: true,
+            sharePercentage:
+              lookupResults.shareholders?.find((s) => s.name === director.name)
+                ?.percentage || 0,
+            aiExtracted: true,
+          })
+        );
       }
     }
 
@@ -95,12 +117,15 @@ function CustomerDetailsAI() {
     if (!businessInfo.businessName?.trim()) {
       newErrors.businessName = 'Business name is required';
     }
-    
+
     if (!businessInfo.registeredAddress?.trim()) {
       newErrors.registeredAddress = 'Registered address is required';
     }
 
-    if (state.applicantType === 'limited-company' && !businessInfo.registrationNumber?.trim()) {
+    if (
+      state.applicantType === 'limited-company' &&
+      !businessInfo.registrationNumber?.trim()
+    ) {
       newErrors.registrationNumber = 'Company registration number is required';
     }
 
@@ -118,8 +143,12 @@ function CustomerDetailsAI() {
         newErrors.partners = 'At least 2 partners are required';
       }
     } else if (state.applicantType === 'limited-company') {
-      if (!personalInfo.beneficialOwners || personalInfo.beneficialOwners.length === 0) {
-        newErrors.beneficialOwners = 'Beneficial owners/directors information is required';
+      if (
+        !personalInfo.beneficialOwners ||
+        personalInfo.beneficialOwners.length === 0
+      ) {
+        newErrors.beneficialOwners =
+          'Beneficial owners/directors information is required';
       }
     }
 
@@ -131,15 +160,21 @@ function CustomerDetailsAI() {
     if (validateForm()) {
       // Get AI suggestions for form completion
       try {
-        const suggestions = await aiService.suggestFormData({
-          businessInfo,
-          personalInfo,
-          applicantType: state.applicantType
-        }, 'customer-details');
-        
+        const suggestions = await aiService.suggestFormData(
+          {
+            businessInfo,
+            personalInfo,
+            applicantType: state.applicantType,
+          },
+          'customer-details'
+        );
+
         // Apply suggestions to business info
-        const enhancedBusinessInfo = { ...businessInfo, ...suggestions.businessAddress };
-        
+        const enhancedBusinessInfo = {
+          ...businessInfo,
+          ...suggestions.businessAddress,
+        };
+
         dispatch(applicationActions.updateBusinessInfo(enhancedBusinessInfo));
         dispatch(applicationActions.updatePersonalInfo(personalInfo));
         navigate('/application-details');
@@ -160,22 +195,25 @@ function CustomerDetailsAI() {
           Customer Details
         </h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Enter your business and personal details. Our AI can auto-fill information from company registration data.
+          Enter your business and personal details.
         </p>
       </div>
 
       {/* AI Company Lookup Section */}
-      {(state.applicantType === 'limited-company' || state.applicantType === 'partnership') && (
+      {(state.applicantType === 'limited-company' ||
+        state.applicantType === 'partnership') && (
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border">
           <div className="flex items-center space-x-3 mb-4">
             <SparklesIcon className="h-6 w-6 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">AI Company Lookup</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Company Lookup
+            </h3>
           </div>
-          
+
           <p className="text-gray-600 mb-4">
-            Enter your company registration number and let AI auto-fill your business information.
+            Enter your company registration number.
           </p>
-          
+
           <div className="flex space-x-3">
             <div className="flex-1">
               <input
@@ -184,7 +222,10 @@ function CustomerDetailsAI() {
                 value={businessInfo.registrationNumber || ''}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setBusinessInfo(prev => ({ ...prev, registrationNumber: value }));
+                  setBusinessInfo((prev) => ({
+                    ...prev,
+                    registrationNumber: value,
+                  }));
                   if (value.length >= 5) {
                     handleCompanyLookup(value);
                   }
@@ -193,15 +234,33 @@ function CustomerDetailsAI() {
               />
             </div>
             <button
-              onClick={() => handleCompanyLookup(businessInfo.registrationNumber)}
+              onClick={() =>
+                handleCompanyLookup(businessInfo.registrationNumber)
+              }
               disabled={isLookingUp || !businessInfo.registrationNumber}
               className="btn-primary px-4 py-2 flex items-center"
             >
               {isLookingUp ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Looking up...
                 </>
@@ -213,7 +272,7 @@ function CustomerDetailsAI() {
               )}
             </button>
           </div>
-          
+
           {errors.lookup && (
             <div className="mt-3 text-sm text-red-600 flex items-center">
               <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
@@ -229,7 +288,9 @@ function CustomerDetailsAI() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <CheckCircleIcon className="h-6 w-6 text-green-600" />
-              <h3 className="text-lg font-semibold text-green-800">Company Information Found</h3>
+              <h3 className="text-lg font-semibold text-green-800">
+                Company Information Found
+              </h3>
               <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                 {Math.round(lookupResults.confidence * 100)}% confidence
               </span>
@@ -241,7 +302,7 @@ function CustomerDetailsAI() {
               ×
             </button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
             <div>
               <span className="text-gray-600">Company Name:</span>
@@ -249,7 +310,9 @@ function CustomerDetailsAI() {
             </div>
             <div>
               <span className="text-gray-600">Registration:</span>
-              <div className="font-medium">{lookupResults.registrationNumber}</div>
+              <div className="font-medium">
+                {lookupResults.registrationNumber}
+              </div>
             </div>
             <div>
               <span className="text-gray-600">Industry:</span>
@@ -257,19 +320,24 @@ function CustomerDetailsAI() {
             </div>
             <div>
               <span className="text-gray-600">Status:</span>
-              <div className="font-medium text-green-600">{lookupResults.status}</div>
+              <div className="font-medium text-green-600">
+                {lookupResults.status}
+              </div>
             </div>
             <div className="col-span-2">
               <span className="text-gray-600">Address:</span>
               <div className="font-medium">
-                {lookupResults.address.street}, {lookupResults.address.city}, {lookupResults.address.county}
+                {lookupResults.address.street}, {lookupResults.address.city},{' '}
+                {lookupResults.address.county}
               </div>
             </div>
           </div>
 
           {lookupResults.aiInsights && (
             <div className="mb-4">
-              <div className="text-sm font-medium text-green-800 mb-2">AI Insights:</div>
+              <div className="text-sm font-medium text-green-800 mb-2">
+                AI Insights:
+              </div>
               <ul className="text-sm text-green-700 space-y-1">
                 {lookupResults.aiInsights.map((insight, index) => (
                   <li key={index} className="flex items-start">
@@ -280,7 +348,7 @@ function CustomerDetailsAI() {
               </ul>
             </div>
           )}
-          
+
           <div className="flex space-x-3">
             <button
               onClick={applyAISuggestions}
@@ -301,7 +369,9 @@ function CustomerDetailsAI() {
       {/* Business Information Form */}
       <div className="card">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Business Information</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Business Information
+          </h2>
           {businessInfo.aiExtracted && (
             <div className="flex items-center space-x-1 bg-blue-50 px-3 py-1 rounded-full">
               <SparklesIcon className="h-4 w-4 text-blue-600" />
@@ -309,11 +379,13 @@ function CustomerDetailsAI() {
             </div>
           )}
         </div>
-        
+
         <BusinessInfoForm
           applicantType={state.applicantType}
           businessInfo={businessInfo}
-          updateBusinessInfo={(updates) => setBusinessInfo(prev => ({ ...prev, ...updates }))}
+          updateBusinessInfo={(updates) =>
+            setBusinessInfo((prev) => ({ ...prev, ...updates }))
+          }
           errors={errors}
           setErrors={setErrors}
         />
@@ -322,7 +394,9 @@ function CustomerDetailsAI() {
       {/* Personal Information Form */}
       <div className="card">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Personal Information
+          </h2>
           {personalInfo.aiExtracted && (
             <div className="flex items-center space-x-1 bg-blue-50 px-3 py-1 rounded-full">
               <SparklesIcon className="h-4 w-4 text-blue-600" />
@@ -330,28 +404,16 @@ function CustomerDetailsAI() {
             </div>
           )}
         </div>
-        
+
         <PersonalInfoForm
           applicantType={state.applicantType}
           personalInfo={personalInfo}
-          updatePersonalInfo={(updates) => setPersonalInfo(prev => ({ ...prev, ...updates }))}
+          updatePersonalInfo={(updates) =>
+            setPersonalInfo((prev) => ({ ...prev, ...updates }))
+          }
           errors={errors}
           setErrors={setErrors}
         />
-      </div>
-
-      {/* AI Form Completion Tips */}
-      <div className="bg-amber-50 rounded-lg p-6">
-        <h3 className="text-sm font-medium text-amber-800 mb-2 flex items-center">
-          <SparklesIcon className="h-4 w-4 mr-2" />
-          AI Form Assistance
-        </h3>
-        <ul className="text-sm text-amber-700 space-y-1">
-          <li>• Company registration lookup provides instant business details</li>
-          <li>• AI validates and suggests corrections for addresses and contact information</li>
-          <li>• Director and shareholding information is automatically extracted</li>
-          <li>• All AI-extracted data can be reviewed and edited before submission</li>
-        </ul>
       </div>
 
       {/* Navigation */}

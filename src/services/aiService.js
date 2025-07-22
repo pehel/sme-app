@@ -87,31 +87,50 @@ class AIService {
         eircode: "D18 X5K7",
         country: "Ireland"
       },
+      // Enhanced business details
+      phone: "+353 1 234 5678",
+      email: "info@greenenergysolutions.ie",
+      website: "www.greenenergysolutions.ie",
+      vatNumber: "IE3234567FA",
+      taxReference: "12345678T",
+      croNumber: companyRegistrationNumber,
+      yearEstablished: "2019",
+      industry: "Renewable Energy Solutions",
+      sicCode: "35.11",
+      sicDescription: "Production of electricity",
+      employeeCount: 15,
+      annualTurnover: "€2,400,000",
+      // Banking details
+      bankDetails: {
+        bankName: "AIB Bank",
+        accountName: "Green Energy Solutions Ltd",
+        sortCode: "93-11-52",
+        accountNumber: "12345678"
+      },
       directors: [
         {
           name: "Sarah O'Connor",
           dateOfBirth: "1985-07-22",
           nationality: "Irish",
           position: "Managing Director",
-          appointmentDate: "2019-03-15"
+          appointmentDate: "2019-03-15",
+          email: "sarah@greenenergysolutions.ie",
+          phone: "+353 87 123 4567"
         },
         {
           name: "Michael Thompson",
           dateOfBirth: "1982-11-08",
           nationality: "Irish",
           position: "Technical Director",
-          appointmentDate: "2019-03-15"
+          appointmentDate: "2019-03-15",
+          email: "michael@greenenergysolutions.ie",
+          phone: "+353 87 765 4321"
         }
       ],
       shareholders: [
         { name: "Sarah O'Connor", percentage: 60 },
         { name: "Michael Thompson", percentage: 40 }
       ],
-      industry: "Renewable Energy Solutions",
-      sicCode: "35.11",
-      sicDescription: "Production of electricity",
-      vatNumber: "IE3234567FA",
-      employeeCount: 15,
       annualReturn: {
         lastFiled: "2024-03-15",
         status: "Up to date"
@@ -121,7 +140,8 @@ class AIService {
         "Well-established company with 5+ years of trading",
         "Clean regulatory record with timely filings",
         "Growing renewable energy sector",
-        "Strong director credentials"
+        "Strong director credentials",
+        "All contact details verified and up to date"
       ],
       confidence: 0.96
     };
@@ -289,10 +309,41 @@ class AIService {
   }
 
   // AI Agent: Conversational Assistant
-  async getContextualHelp(step, userQuery = null) {
+  async getContextualHelp(step, context = {}) {
     this.isProcessing = true;
     
     await new Promise(resolve => setTimeout(resolve, 600));
+    
+    if (step === 'product-selection' && context.userQuery) {
+      const query = context.userQuery.toLowerCase();
+      let response = {
+        message: "I can help you choose the right credit product based on your business needs.",
+        suggestedProducts: []
+      };
+
+      // AI logic for product recommendations
+      if (query.includes('equipment') || query.includes('machinery') || query.includes('expansion')) {
+        response.message = "For equipment purchases and business expansion, I recommend a Term Loan. It offers competitive rates and flexible terms up to 10 years.";
+        response.suggestedProducts = ['term-loan'];
+      } else if (query.includes('green') || query.includes('renewable') || query.includes('sustainable') || query.includes('environment')) {
+        response.message = "Perfect! For sustainable business investments, our Green Loan offers reduced interest rates and special support for renewable energy projects.";
+        response.suggestedProducts = ['green-loan'];
+      } else if (query.includes('cash flow') || query.includes('flexibility') || query.includes('working capital')) {
+        response.message = "For cash flow management and working capital needs, I recommend a Business Overdraft. You only pay interest on what you use, and you have immediate access to funds.";
+        response.suggestedProducts = ['business-overdraft'];
+      } else if (query.includes('expense') || query.includes('travel') || query.includes('card') || query.includes('reward')) {
+        response.message = "A Business Credit Card would be perfect for managing expenses and earning rewards. It includes expense tracking and multiple employee cards.";
+        response.suggestedProducts = ['business-credit-card'];
+      } else if (query.includes('multiple') || query.includes('combination') || query.includes('both')) {
+        response.message = "Many businesses benefit from combining products. For example, a Term Loan for major investments plus an Overdraft for day-to-day cash flow management.";
+        response.suggestedProducts = ['term-loan', 'business-overdraft'];
+      } else {
+        response.message = "I'd be happy to help! Could you tell me more about what you need financing for? For example: equipment purchases, cash flow management, business expansion, or daily expenses?";
+      }
+
+      this.isProcessing = false;
+      return response;
+    }
     
     const helpContent = {
       "product-selection": {
