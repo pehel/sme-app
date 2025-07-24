@@ -36,6 +36,7 @@ const initialState = {
     creditCard: {}
   },
   uploadedDocuments: [],
+  documents: [],
   declarations: {
     truthfulness: false,
     gdprConsent: false,
@@ -47,7 +48,8 @@ const initialState = {
     signed: false,
     agreementText: '',
     signatureData: null
-  }
+  },
+  multiPartyVerification: null
 };
 
 // Action types
@@ -63,7 +65,12 @@ const actionTypes = {
   UPDATE_DECLARATIONS: 'UPDATE_DECLARATIONS',
   SET_DECISION_OUTCOME: 'SET_DECISION_OUTCOME',
   UPDATE_CREDIT_AGREEMENT: 'UPDATE_CREDIT_AGREEMENT',
-  RESET_APPLICATION: 'RESET_APPLICATION'
+  RESET_APPLICATION: 'RESET_APPLICATION',
+  // AI-specific actions
+  UPDATE_DOCUMENTS: 'UPDATE_DOCUMENTS',
+  UPDATE_APPLICATION_FROM_AI: 'UPDATE_APPLICATION_FROM_AI',
+  SET_AI_ANALYSIS: 'SET_AI_ANALYSIS',
+  UPDATE_MULTI_PARTY_VERIFICATION: 'UPDATE_MULTI_PARTY_VERIFICATION'
 };
 
 // Reducer function
@@ -126,6 +133,47 @@ function applicationReducer(state, action) {
     case actionTypes.RESET_APPLICATION:
       return initialState;
     
+    // AI-specific cases
+    case actionTypes.UPDATE_DOCUMENTS:
+      console.log('UPDATE_DOCUMENTS action received:', action.payload);
+      const newState = {
+        ...state,
+        uploadedDocuments: action.payload.documents || action.payload,
+        documents: Array.isArray(action.payload.documents) ? action.payload.documents : 
+                  typeof action.payload.documents === 'object' ? Object.values(action.payload.documents) : 
+                  Array.isArray(action.payload) ? action.payload : [],
+        aiAnalysis: action.payload.aiAnalysis,
+        extractedData: action.payload.extractedData
+      };
+      console.log('New state after UPDATE_DOCUMENTS:', newState);
+      return newState;
+    
+    case actionTypes.UPDATE_APPLICATION_FROM_AI:
+      return {
+        ...state,
+        applicationDetails: {
+          ...state.applicationDetails,
+          ...action.payload.applicationDetails
+        },
+        businessInfo: {
+          ...state.businessInfo,
+          ...action.payload.businessInfo
+        },
+        aiExtracted: true
+      };
+    
+    case actionTypes.SET_AI_ANALYSIS:
+      return {
+        ...state,
+        aiAnalysis: { ...state.aiAnalysis, ...action.payload }
+      };
+    
+    case actionTypes.UPDATE_MULTI_PARTY_VERIFICATION:
+      return {
+        ...state,
+        multiPartyVerification: action.payload
+      };
+    
     default:
       return state;
   }
@@ -173,5 +221,10 @@ export const applicationActions = {
   updateDeclarations: (declarations) => ({ type: actionTypes.UPDATE_DECLARATIONS, payload: declarations }),
   setDecisionOutcome: (outcome) => ({ type: actionTypes.SET_DECISION_OUTCOME, payload: outcome }),
   updateCreditAgreement: (agreement) => ({ type: actionTypes.UPDATE_CREDIT_AGREEMENT, payload: agreement }),
-  resetApplication: () => ({ type: actionTypes.RESET_APPLICATION })
+  resetApplication: () => ({ type: actionTypes.RESET_APPLICATION }),
+  // AI-specific actions
+  updateDocuments: (data) => ({ type: actionTypes.UPDATE_DOCUMENTS, payload: data }),
+  updateApplicationFromAI: (data) => ({ type: actionTypes.UPDATE_APPLICATION_FROM_AI, payload: data }),
+  setAIAnalysis: (analysis) => ({ type: actionTypes.SET_AI_ANALYSIS, payload: analysis }),
+  updateMultiPartyVerification: (data) => ({ type: actionTypes.UPDATE_MULTI_PARTY_VERIFICATION, payload: data })
 };

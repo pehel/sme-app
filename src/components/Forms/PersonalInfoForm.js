@@ -15,7 +15,7 @@ function PersonalInfoForm({ applicantType, personalInfo, updatePersonalInfo, err
   const addPartner = () => {
     const currentPartners = personalInfo.partners || [];
     updatePersonalInfo({
-      partners: [...currentPartners, { fullName: '', dateOfBirth: '', ppsn: '', address: '' }]
+      partners: [...currentPartners, { fullName: '', dateOfBirth: '', ppsn: '', address: '', email: '' }]
     });
   };
 
@@ -41,7 +41,8 @@ function PersonalInfoForm({ applicantType, personalInfo, updatePersonalInfo, err
         sharePercentage: '', 
         address: '',
         nationality: '',
-        occupation: ''
+        occupation: '',
+        email: ''
       }]
     });
   };
@@ -188,7 +189,7 @@ function PersonalInfoForm({ applicantType, personalInfo, updatePersonalInfo, err
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label htmlFor={`partner${index}Name`} className="label-text">
                     Full Name *
@@ -236,6 +237,23 @@ function PersonalInfoForm({ applicantType, personalInfo, updatePersonalInfo, err
                   />
                   {errors[`partner${index}Ppsn`] && (
                     <p className="error-text">{errors[`partner${index}Ppsn`]}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor={`partner${index}Email`} className="label-text">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id={`partner${index}Email`}
+                    value={partner.email || ''}
+                    onChange={(e) => updatePartner(index, 'email', e.target.value)}
+                    className="input-field"
+                    placeholder="partner@example.com"
+                  />
+                  {errors[`partner${index}Email`] && (
+                    <p className="error-text">{errors[`partner${index}Email`]}</p>
                   )}
                 </div>
               </div>
@@ -382,6 +400,23 @@ function PersonalInfoForm({ applicantType, personalInfo, updatePersonalInfo, err
                     className="input-field"
                     placeholder="Managing Director"
                   />
+                </div>
+
+                <div>
+                  <label htmlFor={`owner${index}Email`} className="label-text">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id={`owner${index}Email`}
+                    value={owner.email || ''}
+                    onChange={(e) => updateBeneficialOwner(index, 'email', e.target.value)}
+                    className="input-field"
+                    placeholder="director@company.com"
+                  />
+                  {errors[`owner${index}Email`] && (
+                    <p className="error-text">{errors[`owner${index}Email`]}</p>
+                  )}
                 </div>
               </div>
 

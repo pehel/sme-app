@@ -23,6 +23,62 @@ function ReviewDecision() {
     }
   }, [state.applicantType, state.selectedProducts, navigate]);
 
+  const calculateTotalAmount = () => {
+    let total = 0;
+    
+    // Term Loan
+    if (state.applicationDetails?.termLoan?.amountRequested) {
+      total += parseFloat(state.applicationDetails.termLoan.amountRequested) || 0;
+    }
+    
+    // Green Loan
+    if (state.applicationDetails?.greenLoan?.amountRequested) {
+      total += parseFloat(state.applicationDetails.greenLoan.amountRequested) || 0;
+    }
+    
+    // Business Overdraft
+    if (state.applicationDetails?.overdraft?.limitRequested) {
+      total += parseFloat(state.applicationDetails.overdraft.limitRequested) || 0;
+    }
+    
+    // Business Credit Card
+    if (state.applicationDetails?.creditCard?.limitRequested) {
+      total += parseFloat(state.applicationDetails.creditCard.limitRequested) || 0;
+    }
+    
+    return total;
+  };
+
+  const getDocumentCount = () => {
+    // Debug logging
+    console.log('State.documents:', state.documents);
+    console.log('State.uploadedDocuments:', state.uploadedDocuments);
+    console.log('Type of uploadedDocuments:', typeof state.uploadedDocuments);
+    
+    // Check for documents in the context
+    if (state.documents && Array.isArray(state.documents)) {
+      console.log('Returning documents.length:', state.documents.length);
+      return state.documents.length;
+    }
+    
+    // Check for uploadedDocuments
+    if (state.uploadedDocuments) {
+      if (Array.isArray(state.uploadedDocuments)) {
+        console.log('Returning uploadedDocuments.length:', state.uploadedDocuments.length);
+        return state.uploadedDocuments.length;
+      }
+      // If it's an object (like from our DocumentUploadSimplified component)
+      if (typeof state.uploadedDocuments === 'object') {
+        const count = Object.keys(state.uploadedDocuments).length;
+        console.log('Returning object keys count:', count);
+        return count;
+      }
+    }
+    
+    console.log('Returning 0 - no documents found');
+    return 0;
+  };
+
   const validateDeclarations = () => {
     const newErrors = {};
     
@@ -51,46 +107,20 @@ function ReviewDecision() {
   };
 
   const simulateDecision = () => {
-    // Simulate different decision outcomes
-    const outcomes = [
-      {
-        type: 'approved',
-        title: 'Application Approved!',
-        message: 'Congratulations! Your credit application has been approved.',
-        details: 'You will receive your credit agreement shortly. Please review and sign to complete the process.',
-        nextSteps: [
-          'Review the credit agreement terms',
-          'Provide electronic signature',
-          'Funds will be disbursed within 2-3 business days'
-        ]
-      },
-      {
-        type: 'pending',
-        title: 'Application Under Review',
-        message: 'Your application is currently being reviewed by our credit team.',
-        details: 'We may need additional information or documentation. Expected decision within 15 working days.',
-        nextSteps: [
-          'We will contact you if additional information is needed',
-          'Check your email regularly for updates',
-          'Decision notification will be sent within 15 working days'
-        ]
-      },
-      {
-        type: 'declined',
-        title: 'Application Declined',
-        message: 'Unfortunately, we cannot approve your credit application at this time.',
-        details: 'This decision is based on our current lending criteria. You have the right to appeal this decision.',
-        nextSteps: [
-          'You will receive a detailed explanation by post',
-          'You can appeal this decision within 21 days',
-          'Contact our customer service for more information'
-        ]
-      }
-    ];
+    // Always return approved outcome for demo purposes
+    const approvedOutcome = {
+      type: 'approved',
+      title: 'Application Approved!',
+      message: 'Congratulations! Your credit application has been approved.',
+      details: 'You will receive your credit agreement shortly. Please review and sign to complete the process.',
+      nextSteps: [
+        'Review the credit agreement terms',
+        'Provide electronic signature',
+        'Funds will be disbursed within 2-3 business days'
+      ]
+    };
 
-    // Simulate decision based on some criteria (random for demo)
-    const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    return randomOutcome;
+    return approvedOutcome;
   };
 
   const handleSubmit = async () => {
@@ -255,18 +285,60 @@ function ReviewDecision() {
               Edit
             </button>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {state.selectedProducts.map((productId) => (
-              <span
-                key={productId}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
-              >
-                {productId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </span>
-            ))}
+          <div className="space-y-3">
+            {state.selectedProducts.map((productId) => {
+              let productDetails = null;
+              let amount = 0;
+              
+              if (productId === 'term-loan' && state.applicationDetails?.termLoan) {
+                productDetails = state.applicationDetails.termLoan;
+                amount = parseFloat(productDetails.amountRequested) || 0;
+              } else if (productId === 'green-loan' && state.applicationDetails?.greenLoan) {
+                productDetails = state.applicationDetails.greenLoan;
+                amount = parseFloat(productDetails.amountRequested) || 0;
+              } else if (productId === 'business-overdraft' && state.applicationDetails?.overdraft) {
+                productDetails = state.applicationDetails.overdraft;
+                amount = parseFloat(productDetails.limitRequested) || 0;
+              } else if (productId === 'business-credit-card' && state.applicationDetails?.creditCard) {
+                productDetails = state.applicationDetails.creditCard;
+                amount = parseFloat(productDetails.limitRequested) || 0;
+              }
+
+              return (
+                <div key={productId} className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900">
+                      {productId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </span>
+                    <span className="font-semibold text-primary-600">
+                      {formatCurrency(amount)}
+                    </span>
+                  </div>
+                  {productDetails && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      {productId.includes('loan') && productDetails.purposeOfCredit && (
+                        <div>Purpose: {productDetails.purposeOfCredit}</div>
+                      )}
+                      {productId.includes('loan') && productDetails.repaymentTerm && (
+                        <div>Term: {productDetails.repaymentTerm} months</div>
+                      )}
+                      {productId === 'green-loan' && productDetails.greenPurposeCategory && (
+                        <div>Green Category: {productDetails.greenPurposeCategory}</div>
+                      )}
+                      {productId === 'business-overdraft' && productDetails.overdraftPurpose && (
+                        <div>Purpose: {productDetails.overdraftPurpose.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                      )}
+                      {productId === 'business-credit-card' && productDetails.cardPurpose && (
+                        <div>Primary Use: {productDetails.cardPurpose.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <div className="mt-3 text-sm text-gray-600">
-            Total Amount Requested: {formatCurrency(state.applicationDetails.amountRequested || 0)}
+            Total Amount Requested: {formatCurrency(calculateTotalAmount())}
           </div>
         </div>
 
@@ -321,7 +393,7 @@ function ReviewDecision() {
             </button>
           </div>
           <div className="text-sm text-gray-600">
-            {state.uploadedDocuments?.length || 0} documents uploaded
+            {getDocumentCount()} documents uploaded
           </div>
           <div className="flex items-center mt-2 text-green-600">
             <DocumentCheckIcon className="h-4 w-4 mr-1" />
