@@ -4,6 +4,7 @@ import {
   useApplication,
   applicationActions,
 } from '../../context/ApplicationContext';
+import { useAuth } from '../../context/AuthContext';
 import aiService from '../../services/aiService';
 import {
   CurrencyEuroIcon,
@@ -76,6 +77,7 @@ const products = [
 function ProductSelection() {
   const navigate = useNavigate();
   const { state, dispatch } = useApplication();
+  const { user } = useAuth();
   const [selectedProducts, setSelectedProducts] = useState(
     state.selectedProducts || []
   );
@@ -167,7 +169,17 @@ function ProductSelection() {
     }
 
     dispatch(applicationActions.setSelectedProducts(selectedProducts));
-    navigate('/applicant-type');
+    
+    // Skip applicant type selection ONLY for existing customers
+    if (user?.isExistingCustomer && user?.existingData) {
+      console.log('🏃‍♂️ Existing customer, skipping applicant type selection');
+      // Set default applicant type for existing customer
+      dispatch(applicationActions.setApplicantType('limited-company'));
+      navigate('/customer-details');
+    } else {
+      console.log('🆕 New customer or no existing data, going to applicant type selection');
+      navigate('/applicant-type');
+    }
   };
 
   const isProductSelected = (productId) => selectedProducts.includes(productId);
