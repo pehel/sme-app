@@ -6,16 +6,16 @@ import {
   EyeSlashIcon,
   LockClosedIcon,
   UserIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 
 function Login() {
   const navigate = useNavigate();
   const { authenticate, isLoading, loginAttempts } = useAuth();
-  
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -40,12 +40,12 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
       const result = await authenticate(formData.email, formData.password);
-      
+
       if (result.success && result.mfaRequired) {
         // Store the OTP for demo purposes
         setDemoOTP(result.otp);
@@ -59,12 +59,12 @@ function Login() {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
     if (errors.general) {
-      setErrors(prev => ({ ...prev, general: undefined }));
+      setErrors((prev) => ({ ...prev, general: undefined }));
     }
   };
 
@@ -88,12 +88,22 @@ function Login() {
 
         {/* Demo Users Info */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-yellow-800 mb-2">Demo Accounts:</h3>
+          <h3 className="text-sm font-medium text-yellow-800 mb-2">
+            Demo Accounts:
+          </h3>
           <div className="text-xs text-yellow-700 space-y-1">
-            <div><strong>Customer:</strong> customer@test.com / password123</div>
-            <div><strong>New Customer:</strong> newcustomer@test.com / password123</div>
-            <div><strong>RM:</strong> rm1@bank.com / rmpass123</div>
-            <div><strong>Admin:</strong> admin@bank.com / adminpass123</div>
+            <div>
+              <strong>Customer:</strong> customer@test.com / password
+            </div>
+            <div>
+              <strong>New Customer:</strong> newcustomer@test.com / password
+            </div>
+            <div>
+              <strong>RM:</strong> rm1@bank.com / rmpass123
+            </div>
+            <div>
+              <strong>Admin:</strong> admin@bank.com / adminpass123
+            </div>
           </div>
         </div>
 
@@ -117,7 +127,10 @@ function Login() {
           <div className="space-y-4">
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email Address
               </label>
               <div className="mt-1 relative">
@@ -146,7 +159,10 @@ function Login() {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative">
@@ -160,7 +176,9 @@ function Login() {
                   autoComplete="current-password"
                   required
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('password', e.target.value)
+                  }
                   className={`block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
                   }`}
@@ -198,7 +216,8 @@ function Login() {
           {isBlocked && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
               <p className="text-sm text-red-600">
-                Account temporarily locked due to multiple failed attempts. Please try again later.
+                Account temporarily locked due to multiple failed attempts.
+                Please try again later.
               </p>
             </div>
           )}
@@ -212,7 +231,10 @@ function Login() {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
                 Remember me
               </label>
             </div>

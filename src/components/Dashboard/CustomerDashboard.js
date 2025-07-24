@@ -31,44 +31,55 @@ function CustomerDashboard() {
     const loadApplications = () => {
       // Simulate API call
       setTimeout(() => {
-        const mockApplications = [
-          {
-            id: 'APP-2024-001',
-            businessName: user?.businessName || 'Tech Solutions Ltd',
-            products: ['Business Loan', 'Business Account'],
-            totalAmount: 75000,
-            status: 'PENDING_REVIEW',
-            submittedAt: new Date('2024-01-15'),
-            lastUpdated: new Date('2024-01-16'),
-            completionPercentage: 100,
-            nextSteps: 'Pending RM review',
-            estimatedDecision: new Date('2024-01-20'),
-          },
-          {
-            id: 'APP-2024-002',
-            businessName: user?.businessName || 'Tech Solutions Ltd',
-            products: ['Merchant Services'],
-            totalAmount: 0, // Service-based
-            status: 'APPROVED',
-            submittedAt: new Date('2024-01-10'),
-            lastUpdated: new Date('2024-01-12'),
-            completionPercentage: 100,
-            nextSteps: 'Setup scheduled for Jan 25th',
-            estimatedDecision: null,
-          },
-          {
-            id: 'APP-2024-003',
-            businessName: user?.businessName || 'Tech Solutions Ltd',
-            products: ['Credit Line'],
-            totalAmount: 25000,
-            status: 'DRAFT',
-            submittedAt: null,
-            lastUpdated: new Date('2024-01-18'),
-            completionPercentage: 45,
-            nextSteps: 'Complete financial documentation',
-            estimatedDecision: null,
-          },
-        ];
+        // Only show applications for existing customers
+        let mockApplications = [];
+        
+        if (user?.isExistingCustomer) {
+          console.log('🏦 Loading applications for existing customer');
+          mockApplications = [
+            {
+              id: 'APP-2024-001',
+              businessName: user?.businessName || 'Tech Solutions Ltd',
+              products: ['Business Loan', 'Business Account'],
+              totalAmount: 75000,
+              status: 'PENDING_REVIEW',
+              submittedAt: new Date('2024-01-15'),
+              lastUpdated: new Date('2024-01-16'),
+              completionPercentage: 100,
+              nextSteps: 'Pending RM review',
+              estimatedDecision: new Date('2024-01-20'),
+            },
+            {
+              id: 'APP-2024-002',
+              businessName: user?.businessName || 'Tech Solutions Ltd',
+              products: ['Merchant Services'],
+              totalAmount: 0, // Service-based
+              status: 'APPROVED',
+              submittedAt: new Date('2024-01-10'),
+              lastUpdated: new Date('2024-01-12'),
+              completionPercentage: 100,
+              nextSteps: 'Setup scheduled for Jan 25th',
+              estimatedDecision: null,
+            },
+            {
+              id: 'APP-2024-003',
+              businessName: user?.businessName || 'Tech Solutions Ltd',
+              products: ['Credit Line'],
+              totalAmount: 25000,
+              status: 'DRAFT',
+              submittedAt: null,
+              lastUpdated: new Date('2024-01-18'),
+              completionPercentage: 45,
+              nextSteps: 'Complete financial documentation',
+              estimatedDecision: null,
+            },
+          ];
+        } else {
+          console.log('🆕 New customer - no existing applications');
+          // New customers have no applications
+          mockApplications = [];
+        }
+        
         setApplications(mockApplications);
         setIsLoading(false);
       }, 800);
@@ -464,22 +475,56 @@ function CustomerDashboard() {
 
             {applications.length === 0 && (
               <div className="text-center py-12">
-                <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No applications yet
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Get started by creating your first banking application.
-                </p>
-                <div className="mt-6">
-                  <button
-                    onClick={handleStartNewApplication}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Start New Application
-                  </button>
-                </div>
+                {user?.isExistingCustomer ? (
+                  // Existing customer with no applications
+                  <>
+                    <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">
+                      No applications yet
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Get started by creating your first banking application.
+                    </p>
+                    <div className="mt-6">
+                      <button
+                        onClick={handleStartNewApplication}
+                        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        <PlusIcon className="h-4 w-4 mr-2" />
+                        Start New Application
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  // New customer welcome
+                  <>
+                    <div className="mb-6">
+                      <div className="bg-blue-50 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                        <DocumentTextIcon className="h-10 w-10 text-blue-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-800 mb-2">Welcome to SME Banking!</h3>
+                      <p className="text-gray-600 text-lg mb-4">Ready to get started with your business banking?</p>
+                      <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
+                        Apply for business loans, accounts, and services all in one place. Our streamlined process 
+                        makes it easy to get the financing your business needs.
+                      </p>
+                    </div>
+                    <div className="mt-6">
+                      <button
+                        onClick={handleStartNewApplication}
+                        className="inline-flex items-center px-8 py-4 border border-transparent shadow-sm text-lg font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        <PlusIcon className="h-6 w-6 mr-3" />
+                        Start Your First Application
+                      </button>
+                    </div>
+                    <div className="mt-6 text-sm text-gray-500 space-y-1">
+                      <p>✓ Quick online application</p>
+                      <p>✓ Fast approval decisions</p>
+                      <p>✓ Competitive rates</p>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>

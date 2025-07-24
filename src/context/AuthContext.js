@@ -4,7 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 export const USER_ROLES = {
   CUSTOMER: 'customer',
   RM: 'rm',
-  SUPERUSER: 'superuser'
+  SUPERUSER: 'superuser',
 };
 
 // Mock user database - in real app this would be in backend
@@ -13,7 +13,7 @@ const MOCK_USERS = {
   'customer@test.com': {
     id: 'cust_001',
     email: 'customer@test.com',
-    password: 'password123', // In real app, this would be hashed
+    password: 'password', // In real app, this would be hashed
     role: USER_ROLES.CUSTOMER,
     name: 'John Smith',
     businessName: 'TechGreen Solutions',
@@ -34,13 +34,13 @@ const MOCK_USERS = {
           ppsn: '1234567T',
           taxRef: 'IE9876543H',
           croNumber: 'CRO123456',
-          vatNumber: 'IE9876543H'
+          vatNumber: 'IE9876543H',
         },
         industryType: 'Technology',
         numberOfEmployees: '25',
         annualTurnover: '2500000',
         yearEstablished: '2019',
-        bankAccount: 'IE29 BOFI 9000 1234 5678 90'
+        bankAccount: 'IE29 BOFI 9000 1234 5678 90',
       },
       personalInfo: {
         firstName: 'John',
@@ -52,7 +52,7 @@ const MOCK_USERS = {
           city: 'Dublin',
           county: 'Dublin',
           postalCode: 'D02 VN88',
-          country: 'Ireland'
+          country: 'Ireland',
         },
         phone: '+353-87-123-4567',
         email: 'customer@test.com',
@@ -60,19 +60,19 @@ const MOCK_USERS = {
         idDocument: {
           type: 'passport',
           number: 'P123456789',
-          expiryDate: '2030-05-20'
+          expiryDate: '2030-05-20',
         },
         employmentStatus: 'Business Owner',
         position: 'Managing Director',
         workExperience: '15',
-        annualIncome: '85000'
-      }
-    }
+        annualIncome: '85000',
+      },
+    },
   },
   'newcustomer@test.com': {
     id: 'cust_002',
     email: 'newcustomer@test.com',
-    password: 'password123',
+    password: 'password',
     role: USER_ROLES.CUSTOMER,
     name: 'Sarah Johnson',
     businessName: 'Green Energy Ltd',
@@ -92,7 +92,7 @@ const MOCK_USERS = {
           city: 'Dublin',
           county: 'Dublin',
           postalCode: 'D02 F234',
-          country: 'Ireland'
+          country: 'Ireland',
         },
         phone: '+353-86-987-6543',
         email: 'newcustomer@test.com',
@@ -100,12 +100,12 @@ const MOCK_USERS = {
         idDocument: {
           type: 'passport',
           number: 'P987654321',
-          expiryDate: '2029-11-15'
+          expiryDate: '2029-11-15',
         },
         employmentStatus: 'Business Owner',
         position: 'CEO',
         workExperience: '8',
-        annualIncome: '75000'
+        annualIncome: '75000',
       },
       businessInfo: {
         businessName: 'Green Energy Ltd',
@@ -118,15 +118,15 @@ const MOCK_USERS = {
           ppsn: '2345678U',
           taxRef: 'IE8765432G',
           croNumber: 'CRO789012',
-          vatNumber: 'IE8765432G'
+          vatNumber: 'IE8765432G',
         },
         industryType: 'Energy',
         numberOfEmployees: '12',
         annualTurnover: '1800000',
         yearEstablished: '2021',
-        bankAccount: 'IE29 BOFI 9000 9876 5432 10'
-      }
-    }
+        bankAccount: 'IE29 BOFI 9000 9876 5432 10',
+      },
+    },
   },
   // Relationship Managers
   'rm1@bank.com': {
@@ -134,15 +134,15 @@ const MOCK_USERS = {
     email: 'rm1@bank.com',
     password: 'rmpass123',
     role: USER_ROLES.RM,
-    name: 'Michael O\'Connor',
+    name: "Michael O'Connor",
     phone: '+353-85-111-2222',
     mfaEnabled: true,
     accessScope: {
       regions: ['Dublin', 'Cork'],
       products: ['term-loan', 'green-loan'],
-      maxAmount: 500000
+      maxAmount: 500000,
     },
-    createdAt: '2023-03-10'
+    createdAt: '2023-03-10',
   },
   'rm2@bank.com': {
     id: 'rm_002',
@@ -155,9 +155,9 @@ const MOCK_USERS = {
     accessScope: {
       regions: ['Galway', 'Limerick'],
       products: ['business-overdraft', 'business-credit-card'],
-      maxAmount: 100000
+      maxAmount: 100000,
     },
-    createdAt: '2023-06-15'
+    createdAt: '2023-06-15',
   },
   // Superusers
   'admin@bank.com': {
@@ -168,8 +168,8 @@ const MOCK_USERS = {
     name: 'David Walsh',
     phone: '+353-85-555-6666',
     mfaEnabled: true,
-    createdAt: '2022-01-01'
-  }
+    createdAt: '2022-01-01',
+  },
 };
 
 // Application status types
@@ -181,7 +181,7 @@ export const APPLICATION_STATUS = {
   APPROVED: 'approved',
   DECLINED: 'declined',
   OFFER_ACCEPTED: 'offer_accepted',
-  COMPLETED: 'completed'
+  COMPLETED: 'completed',
 };
 
 // Initial state
@@ -198,7 +198,7 @@ const initialState = {
   currentOTP: null,
   otpExpiry: null,
   loginAttempts: 0,
-  sessionTimeout: null
+  sessionTimeout: null,
 };
 
 // Action types
@@ -223,7 +223,7 @@ const actionTypes = {
   CLEAR_SESSION_TIMEOUT: 'CLEAR_SESSION_TIMEOUT',
   ADD_APPLICATION: 'ADD_APPLICATION',
   UPDATE_APPLICATION: 'UPDATE_APPLICATION',
-  ASSIGN_APPLICATION: 'ASSIGN_APPLICATION'
+  ASSIGN_APPLICATION: 'ASSIGN_APPLICATION',
 };
 
 // Reducer
@@ -233,7 +233,7 @@ function authReducer(state, action) {
       return {
         ...state,
         isLoading: true,
-        mfaRequired: false
+        mfaRequired: false,
       };
 
     case actionTypes.LOGIN_SUCCESS:
@@ -245,7 +245,7 @@ function authReducer(state, action) {
         isLoading: false,
         session: action.payload.session,
         tempCredentials: null,
-        loginAttempts: 0
+        loginAttempts: 0,
       };
 
     case actionTypes.LOGIN_FAILURE:
@@ -254,7 +254,7 @@ function authReducer(state, action) {
         isLoading: false,
         user: null,
         isAuthenticated: false,
-        loginAttempts: state.loginAttempts + 1
+        loginAttempts: state.loginAttempts + 1,
       };
 
     case actionTypes.MFA_REQUIRED:
@@ -263,7 +263,7 @@ function authReducer(state, action) {
         mfaRequired: true,
         mfaMethod: action.payload.method,
         tempCredentials: action.payload.credentials,
-        isLoading: false
+        isLoading: false,
       };
 
     case actionTypes.MFA_SUCCESS:
@@ -272,14 +272,14 @@ function authReducer(state, action) {
         ...state,
         mfaRequired: false,
         currentOTP: null,
-        otpExpiry: null
+        otpExpiry: null,
       };
 
     case actionTypes.MFA_FAILURE:
       return {
         ...state,
         currentOTP: null,
-        otpExpiry: null
+        otpExpiry: null,
       };
 
     case actionTypes.LOGOUT:
@@ -292,7 +292,7 @@ function authReducer(state, action) {
         tempCredentials: null,
         currentOTP: null,
         otpExpiry: null,
-        sessionTimeout: null
+        sessionTimeout: null,
       };
 
     case actionTypes.REGISTER_USER:
@@ -300,8 +300,8 @@ function authReducer(state, action) {
         ...state,
         users: {
           ...state.users,
-          [action.payload.email]: action.payload
-        }
+          [action.payload.email]: action.payload,
+        },
       };
 
     case actionTypes.CREATE_RM:
@@ -309,8 +309,8 @@ function authReducer(state, action) {
         ...state,
         users: {
           ...state.users,
-          [action.payload.email]: action.payload
-        }
+          [action.payload.email]: action.payload,
+        },
       };
 
     case actionTypes.UPDATE_RM:
@@ -320,9 +320,9 @@ function authReducer(state, action) {
           ...state.users,
           [action.payload.email]: {
             ...state.users[action.payload.email],
-            ...action.payload
-          }
-        }
+            ...action.payload,
+          },
+        },
       };
 
     case actionTypes.DEACTIVATE_RM:
@@ -332,59 +332,59 @@ function authReducer(state, action) {
           ...state.users,
           [action.payload.email]: {
             ...state.users[action.payload.email],
-            isActive: false
-          }
-        }
+            isActive: false,
+          },
+        },
       };
 
     case actionTypes.GENERATE_OTP:
       return {
         ...state,
         currentOTP: action.payload.otp,
-        otpExpiry: action.payload.expiry
+        otpExpiry: action.payload.expiry,
       };
 
     case actionTypes.CLEAR_OTP:
       return {
         ...state,
         currentOTP: null,
-        otpExpiry: null
+        otpExpiry: null,
       };
 
     case actionTypes.SET_SESSION_TIMEOUT:
       return {
         ...state,
-        sessionTimeout: action.payload
+        sessionTimeout: action.payload,
       };
 
     case actionTypes.CLEAR_SESSION_TIMEOUT:
       return {
         ...state,
-        sessionTimeout: null
+        sessionTimeout: null,
       };
 
     case actionTypes.ADD_APPLICATION:
       return {
         ...state,
-        applications: [...state.applications, action.payload]
+        applications: [...state.applications, action.payload],
       };
 
     case actionTypes.UPDATE_APPLICATION:
       return {
         ...state,
-        applications: state.applications.map(app =>
+        applications: state.applications.map((app) =>
           app.id === action.payload.id ? { ...app, ...action.payload } : app
-        )
+        ),
       };
 
     case actionTypes.ASSIGN_APPLICATION:
       return {
         ...state,
-        applications: state.applications.map(app =>
+        applications: state.applications.map((app) =>
           app.id === action.payload.applicationId
             ? { ...app, assignedRM: action.payload.rmId }
             : app
-        )
+        ),
       };
 
     default:
@@ -395,73 +395,73 @@ function authReducer(state, action) {
 // Action creators
 export const authActions = {
   loginStart: () => ({ type: actionTypes.LOGIN_START }),
-  
+
   loginSuccess: (user, session) => ({
     type: actionTypes.LOGIN_SUCCESS,
-    payload: { user, session }
+    payload: { user, session },
   }),
-  
+
   loginFailure: () => ({ type: actionTypes.LOGIN_FAILURE }),
-  
+
   mfaRequired: (method, credentials) => ({
     type: actionTypes.MFA_REQUIRED,
-    payload: { method, credentials }
+    payload: { method, credentials },
   }),
-  
+
   mfaSuccess: () => ({ type: actionTypes.MFA_SUCCESS }),
-  
+
   mfaFailure: () => ({ type: actionTypes.MFA_FAILURE }),
-  
+
   logout: () => ({ type: actionTypes.LOGOUT }),
-  
+
   registerUser: (userData) => ({
     type: actionTypes.REGISTER_USER,
-    payload: userData
+    payload: userData,
   }),
-  
+
   createRM: (rmData) => ({
     type: actionTypes.CREATE_RM,
-    payload: rmData
+    payload: rmData,
   }),
-  
+
   updateRM: (rmData) => ({
     type: actionTypes.UPDATE_RM,
-    payload: rmData
+    payload: rmData,
   }),
-  
+
   deactivateRM: (email) => ({
     type: actionTypes.DEACTIVATE_RM,
-    payload: { email }
+    payload: { email },
   }),
-  
+
   generateOTP: (otp, expiry) => ({
     type: actionTypes.GENERATE_OTP,
-    payload: { otp, expiry }
+    payload: { otp, expiry },
   }),
-  
+
   clearOTP: () => ({ type: actionTypes.CLEAR_OTP }),
-  
+
   setSessionTimeout: (timeout) => ({
     type: actionTypes.SET_SESSION_TIMEOUT,
-    payload: timeout
+    payload: timeout,
   }),
-  
+
   clearSessionTimeout: () => ({ type: actionTypes.CLEAR_SESSION_TIMEOUT }),
-  
+
   addApplication: (application) => ({
     type: actionTypes.ADD_APPLICATION,
-    payload: application
+    payload: application,
   }),
-  
+
   updateApplication: (application) => ({
     type: actionTypes.UPDATE_APPLICATION,
-    payload: application
+    payload: application,
   }),
-  
+
   assignApplication: (applicationId, rmId) => ({
     type: actionTypes.ASSIGN_APPLICATION,
-    payload: { applicationId, rmId }
-  })
+    payload: { applicationId, rmId },
+  }),
 };
 
 // Context
@@ -494,7 +494,7 @@ export function AuthProvider({ children }) {
     if (state.sessionTimeout) {
       clearTimeout(state.sessionTimeout);
     }
-    
+
     if (state.isAuthenticated) {
       const timeout = setTimeout(() => {
         dispatch(authActions.logout());
@@ -507,7 +507,7 @@ export function AuthProvider({ children }) {
   // Utility functions
   const generateOTP = () => {
     // For demo purposes, always use 111111
-    const otp = "111111";
+    const otp = '111111';
     const expiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
     dispatch(authActions.generateOTP(otp, expiry));
     return otp;
@@ -516,7 +516,7 @@ export function AuthProvider({ children }) {
   const validateOTP = (inputOTP) => {
     const now = new Date();
     // For demo purposes, always accept 111111
-    if (inputOTP === "111111") {
+    if (inputOTP === '111111') {
       return true;
     }
     return (
@@ -530,7 +530,7 @@ export function AuthProvider({ children }) {
     dispatch(authActions.loginStart());
 
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const user = state.users[email];
     if (!user || user.password !== password || user.isActive === false) {
@@ -548,12 +548,12 @@ export function AuthProvider({ children }) {
 
   const verifyMFA = async (inputOTP) => {
     console.log('🔐 verifyMFA called with:', inputOTP);
-    console.log('🔐 Current state:', { 
-      tempCredentials: state.tempCredentials, 
+    console.log('🔐 Current state:', {
+      tempCredentials: state.tempCredentials,
       mfaRequired: state.mfaRequired,
-      isAuthenticated: state.isAuthenticated 
+      isAuthenticated: state.isAuthenticated,
     });
-    
+
     if (!validateOTP(inputOTP)) {
       console.log('❌ OTP validation failed');
       dispatch(authActions.mfaFailure());
@@ -562,10 +562,10 @@ export function AuthProvider({ children }) {
 
     const user = state.users[state.tempCredentials.email];
     console.log('👤 Found user:', user);
-    
+
     const session = {
       token: 'mock_token_' + Date.now(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     };
 
     console.log('🎯 Dispatching MFA success and login success');
@@ -589,7 +589,7 @@ export function AuthProvider({ children }) {
       role: USER_ROLES.CUSTOMER,
       isExistingCustomer: false,
       mfaEnabled: true,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     dispatch(authActions.registerUser(newUser));
@@ -607,7 +607,7 @@ export function AuthProvider({ children }) {
       role: USER_ROLES.RM,
       mfaEnabled: true,
       isActive: true,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     dispatch(authActions.createRM(newRM));
@@ -635,9 +635,14 @@ export function AuthProvider({ children }) {
           if (!application) return false;
 
           const scope = state.user.accessScope;
-          
+
           // Check product access
-          if (scope.products && !scope.products.some(p => application.selectedProducts?.includes(p))) {
+          if (
+            scope.products &&
+            !scope.products.some((p) =>
+              application.selectedProducts?.includes(p)
+            )
+          ) {
             return false;
           }
 
@@ -648,10 +653,18 @@ export function AuthProvider({ children }) {
 
           return true;
         }
-        return ['approve_application', 'decline_application', 'request_info'].includes(permission);
+        return [
+          'approve_application',
+          'decline_application',
+          'request_info',
+        ].includes(permission);
 
       case USER_ROLES.CUSTOMER:
-        return ['create_application', 'view_own_applications', 'edit_draft_application'].includes(permission);
+        return [
+          'create_application',
+          'view_own_applications',
+          'edit_draft_application',
+        ].includes(permission);
 
       default:
         return false;
@@ -669,14 +682,10 @@ export function AuthProvider({ children }) {
     validateOTP,
     hasPermission,
     resetSessionTimeout,
-    dispatch
+    dispatch,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // Hook to use auth context
