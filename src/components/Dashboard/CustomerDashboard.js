@@ -33,7 +33,7 @@ function CustomerDashboard() {
       setTimeout(() => {
         // Only show applications for existing customers
         let mockApplications = [];
-        
+
         if (user?.isExistingCustomer) {
           console.log('🏦 Loading applications for existing customer');
           mockApplications = [
@@ -79,7 +79,7 @@ function CustomerDashboard() {
           // New customers have no applications
           mockApplications = [];
         }
-        
+
         setApplications(mockApplications);
         setIsLoading(false);
       }, 800);
@@ -166,7 +166,7 @@ function CustomerDashboard() {
   };
 
   const formatCurrency = (amount) => {
-    if (amount === 0) return 'Service-based';
+    if (amount === 0) return '0';
     return new Intl.NumberFormat('en-IE', {
       style: 'currency',
       currency: 'EUR',
@@ -502,11 +502,14 @@ function CustomerDashboard() {
                       <div className="bg-blue-50 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                         <DocumentTextIcon className="h-10 w-10 text-blue-600" />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-2">Welcome to SME Banking!</h3>
-                      <p className="text-gray-600 text-lg mb-4">Ready to get started with your business banking?</p>
+                      <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                        SME BANKING
+                      </h3>
+                      <p className="text-gray-600 text-lg mb-4">
+                        Create an application for accessing products
+                      </p>
                       <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
-                        Apply for business loans, accounts, and services all in one place. Our streamlined process 
-                        makes it easy to get the financing your business needs.
+                        Business loans, Overdraft, Credit Cards.
                       </p>
                     </div>
                     <div className="mt-6">
@@ -521,56 +524,12 @@ function CustomerDashboard() {
                     <div className="mt-6 text-sm text-gray-500 space-y-1">
                       <p>✓ Quick online application</p>
                       <p>✓ Fast approval decisions</p>
-                      <p>✓ Competitive rates</p>
+                      <p>✓ Full transparency</p>
                     </div>
                   </>
                 )}
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Help Section */}
-        <div className="px-4 sm:px-0 mt-8">
-          <div className="bg-blue-50 rounded-lg p-6">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <BuildingOfficeIcon className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">
-                  Need Help?
-                </h3>
-                <div className="mt-2 text-sm text-blue-700">
-                  <p>
-                    Our relationship managers are here to help. Contact us at{' '}
-                    <a href="mailto:sme-support@bank.ie" className="underline">
-                      sme-support@bank.ie
-                    </a>{' '}
-                    or call{' '}
-                    <a href="tel:+35312345678" className="underline">
-                      +353 1 234 5678
-                    </a>
-                  </p>
-                </div>
-                <div className="mt-3">
-                  <div className="-mx-2 -my-1.5 flex">
-                    <button
-                      type="button"
-                      className="bg-blue-50 px-2 py-1.5 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-50 focus:ring-blue-600"
-                    >
-                      Contact Support
-                    </button>
-                    <button
-                      type="button"
-                      className="ml-3 bg-blue-50 px-2 py-1.5 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-50 focus:ring-blue-600"
-                    >
-                      View FAQ
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </main>

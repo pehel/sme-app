@@ -10,13 +10,13 @@ import {
   EyeIcon,
   EyeSlashIcon,
   CheckCircleIcon,
-  XCircleIcon
+  XCircleIcon,
 } from '@heroicons/react/24/outline';
 
 function Register() {
   const navigate = useNavigate();
   const { register, isLoading } = useAuth();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     businessName: '',
@@ -24,15 +24,15 @@ function Register() {
     phone: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false
+    agreeToTerms: false,
   });
-  
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({
     score: 0,
-    feedback: []
+    feedback: [],
   });
 
   const validatePassword = (password) => {
@@ -41,7 +41,7 @@ function Register() {
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
       number: /\d/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     };
 
     const score = Object.values(checks).filter(Boolean).length;
@@ -125,7 +125,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
@@ -134,16 +134,17 @@ function Register() {
         businessName: formData.businessName.trim(),
         email: formData.email.toLowerCase().trim(),
         phone: formData.phone.trim(),
-        password: formData.password
+        password: formData.password,
       });
 
       if (result.success) {
         // Show success message and redirect to login
         navigate('/login', {
           state: {
-            message: 'Account created successfully! Please sign in with your new credentials.',
-            email: formData.email
-          }
+            message:
+              'Account created successfully! Please sign in with your new credentials.',
+            email: formData.email,
+          },
         });
       } else {
         setErrors({ general: result.error });
@@ -154,14 +155,14 @@ function Register() {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear related errors
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
     if (errors.general) {
-      setErrors(prev => ({ ...prev, general: undefined }));
+      setErrors((prev) => ({ ...prev, general: undefined }));
     }
 
     // Update password strength
@@ -172,7 +173,7 @@ function Register() {
     // Check password match
     if (field === 'confirmPassword' || field === 'password') {
       if (errors.confirmPassword && formData.password === value) {
-        setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+        setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
       }
     }
   };
@@ -198,7 +199,10 @@ function Register() {
           <div className="space-y-4">
             {/* Full Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Full Name *
               </label>
               <div className="mt-1 relative">
@@ -225,7 +229,10 @@ function Register() {
 
             {/* Business Name */}
             <div>
-              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="businessName"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Business Name *
               </label>
               <div className="mt-1 relative">
@@ -238,7 +245,9 @@ function Register() {
                   type="text"
                   required
                   value={formData.businessName}
-                  onChange={(e) => handleInputChange('businessName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('businessName', e.target.value)
+                  }
                   className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                     errors.businessName ? 'border-red-300' : 'border-gray-300'
                   }`}
@@ -246,13 +255,18 @@ function Register() {
                 />
               </div>
               {errors.businessName && (
-                <p className="mt-1 text-sm text-red-600">{errors.businessName}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.businessName}
+                </p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email Address *
               </label>
               <div className="mt-1 relative">
@@ -280,7 +294,10 @@ function Register() {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Mobile Phone *
               </label>
               <div className="mt-1 relative">
@@ -307,7 +324,10 @@ function Register() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password *
               </label>
               <div className="mt-1 relative">
@@ -320,7 +340,9 @@ function Register() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('password', e.target.value)
+                  }
                   className={`block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
                   }`}
@@ -340,25 +362,36 @@ function Register() {
                   </button>
                 </div>
               </div>
-              
+
               {/* Password Strength Indicator */}
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-gray-600">Password strength:</span>
-                    <span className={`text-xs font-medium ${
-                      passwordStrength.score <= 2 ? 'text-red-600' :
-                      passwordStrength.score <= 3 ? 'text-yellow-600' :
-                      passwordStrength.score <= 4 ? 'text-blue-600' :
-                      'text-green-600'
-                    }`}>
+                    <span className="text-xs text-gray-600">
+                      Password strength:
+                    </span>
+                    <span
+                      className={`text-xs font-medium ${
+                        passwordStrength.score <= 2
+                          ? 'text-red-600'
+                          : passwordStrength.score <= 3
+                          ? 'text-yellow-600'
+                          : passwordStrength.score <= 4
+                          ? 'text-blue-600'
+                          : 'text-green-600'
+                      }`}
+                    >
                       {getPasswordStrengthText(passwordStrength.score)}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full transition-all duration-300 ${getPasswordStrengthColor(passwordStrength.score)}`}
-                      style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                      className={`h-2 rounded-full transition-all duration-300 ${getPasswordStrengthColor(
+                        passwordStrength.score
+                      )}`}
+                      style={{
+                        width: `${(passwordStrength.score / 5) * 100}%`,
+                      }}
                     ></div>
                   </div>
                   {passwordStrength.feedback.length > 0 && (
@@ -368,7 +401,7 @@ function Register() {
                   )}
                 </div>
               )}
-              
+
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
@@ -376,7 +409,10 @@ function Register() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirm Password *
               </label>
               <div className="mt-1 relative">
@@ -389,23 +425,32 @@ function Register() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('confirmPassword', e.target.value)
+                  }
                   className={`block w-full pl-10 pr-10 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                    errors.confirmPassword ? 'border-red-300' : 
-                    formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-green-300' :
-                    'border-gray-300'
+                    errors.confirmPassword
+                      ? 'border-red-300'
+                      : formData.confirmPassword &&
+                        formData.password === formData.confirmPassword
+                      ? 'border-green-300'
+                      : 'border-gray-300'
                   }`}
                   placeholder="Confirm your password"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  {formData.confirmPassword && formData.password === formData.confirmPassword ? (
+                  {formData.confirmPassword &&
+                  formData.password === formData.confirmPassword ? (
                     <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                  ) : formData.confirmPassword && formData.password !== formData.confirmPassword ? (
+                  ) : formData.confirmPassword &&
+                    formData.password !== formData.confirmPassword ? (
                     <XCircleIcon className="h-5 w-5 text-red-500" />
                   ) : (
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="text-gray-400 hover:text-gray-600 focus:outline-none"
                     >
                       {showConfirmPassword ? (
@@ -418,7 +463,9 @@ function Register() {
                 </div>
               </div>
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
           </div>
@@ -432,7 +479,9 @@ function Register() {
                   name="agreeToTerms"
                   type="checkbox"
                   checked={formData.agreeToTerms}
-                  onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
+                  onChange={(e) =>
+                    handleInputChange('agreeToTerms', e.target.checked)
+                  }
                   className={`h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded ${
                     errors.agreeToTerms ? 'border-red-300' : ''
                   }`}
@@ -447,8 +496,8 @@ function Register() {
                     className="text-blue-600 hover:text-blue-500 font-medium underline bg-transparent border-none p-0"
                   >
                     Terms of Service
-                  </button>
-                  {' '}and{' '}
+                  </button>{' '}
+                  and{' '}
                   <button
                     type="button"
                     onClick={() => window.open('/privacy', '_blank')}
@@ -509,9 +558,7 @@ function Register() {
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            Your data is protected with bank-grade security and encryption
-          </p>
+          <p className="text-xs text-gray-500">Rajat@Innovation</p>
         </div>
       </div>
     </div>

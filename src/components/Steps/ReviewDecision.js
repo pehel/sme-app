@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApplication, applicationActions } from '../../context/ApplicationContext';
-import { 
-  CheckCircleIcon, 
-  ClockIcon, 
+import {
+  useApplication,
+  applicationActions,
+} from '../../context/ApplicationContext';
+import {
+  CheckCircleIcon,
+  ClockIcon,
   XCircleIcon,
   PencilIcon,
-  DocumentCheckIcon
+  DocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 
 function ReviewDecision() {
@@ -25,27 +28,31 @@ function ReviewDecision() {
 
   const calculateTotalAmount = () => {
     let total = 0;
-    
+
     // Term Loan
     if (state.applicationDetails?.termLoan?.amountRequested) {
-      total += parseFloat(state.applicationDetails.termLoan.amountRequested) || 0;
+      total +=
+        parseFloat(state.applicationDetails.termLoan.amountRequested) || 0;
     }
-    
+
     // Green Loan
     if (state.applicationDetails?.greenLoan?.amountRequested) {
-      total += parseFloat(state.applicationDetails.greenLoan.amountRequested) || 0;
+      total +=
+        parseFloat(state.applicationDetails.greenLoan.amountRequested) || 0;
     }
-    
+
     // Business Overdraft
     if (state.applicationDetails?.overdraft?.limitRequested) {
-      total += parseFloat(state.applicationDetails.overdraft.limitRequested) || 0;
+      total +=
+        parseFloat(state.applicationDetails.overdraft.limitRequested) || 0;
     }
-    
+
     // Business Credit Card
     if (state.applicationDetails?.creditCard?.limitRequested) {
-      total += parseFloat(state.applicationDetails.creditCard.limitRequested) || 0;
+      total +=
+        parseFloat(state.applicationDetails.creditCard.limitRequested) || 0;
     }
-    
+
     return total;
   };
 
@@ -54,17 +61,20 @@ function ReviewDecision() {
     console.log('State.documents:', state.documents);
     console.log('State.uploadedDocuments:', state.uploadedDocuments);
     console.log('Type of uploadedDocuments:', typeof state.uploadedDocuments);
-    
+
     // Check for documents in the context
     if (state.documents && Array.isArray(state.documents)) {
       console.log('Returning documents.length:', state.documents.length);
       return state.documents.length;
     }
-    
+
     // Check for uploadedDocuments
     if (state.uploadedDocuments) {
       if (Array.isArray(state.uploadedDocuments)) {
-        console.log('Returning uploadedDocuments.length:', state.uploadedDocuments.length);
+        console.log(
+          'Returning uploadedDocuments.length:',
+          state.uploadedDocuments.length
+        );
         return state.uploadedDocuments.length;
       }
       // If it's an object (like from our DocumentUploadSimplified component)
@@ -74,19 +84,21 @@ function ReviewDecision() {
         return count;
       }
     }
-    
+
     console.log('Returning 0 - no documents found');
     return 0;
   };
 
   const validateDeclarations = () => {
     const newErrors = {};
-    
+
     if (!declarations.truthfulness) {
-      newErrors.truthfulness = 'You must confirm the truthfulness of your information';
+      newErrors.truthfulness =
+        'You must confirm the truthfulness of your information';
     }
     if (!declarations.gdprConsent) {
-      newErrors.gdprConsent = 'GDPR consent is required to process your application';
+      newErrors.gdprConsent =
+        'GDPR consent is required to process your application';
     }
     if (!declarations.creditCheckConsent) {
       newErrors.creditCheckConsent = 'Credit check consent is required';
@@ -100,9 +112,9 @@ function ReviewDecision() {
   };
 
   const handleDeclarationChange = (field, value) => {
-    setDeclarations(prev => ({ ...prev, [field]: value }));
+    setDeclarations((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -112,12 +124,13 @@ function ReviewDecision() {
       type: 'approved',
       title: 'Application Approved!',
       message: 'Congratulations! Your credit application has been approved.',
-      details: 'You will receive your credit agreement shortly. Please review and sign to complete the process.',
+      details:
+        'You will receive your credit agreement shortly. Please review and sign to complete the process.',
       nextSteps: [
         'Review the credit agreement terms',
         'Provide electronic signature',
-        'Funds will be disbursed within 2-3 business days'
-      ]
+        'Funds will be disbursed within 2-3 business days',
+      ],
     };
 
     return approvedOutcome;
@@ -129,10 +142,10 @@ function ReviewDecision() {
     }
 
     setIsSubmitting(true);
-    
+
     // Update declarations in context
     dispatch(applicationActions.updateDeclarations(declarations));
-    
+
     // Simulate API call delay
     setTimeout(() => {
       const decisionOutcome = simulateDecision();
@@ -179,7 +192,7 @@ function ReviewDecision() {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IE', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
     }).format(amount);
   };
 
@@ -187,28 +200,40 @@ function ReviewDecision() {
     return (
       <div className="space-y-8">
         <div className="text-center">
-          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
-            decision.type === 'approved' ? 'bg-green-100' :
-            decision.type === 'pending' ? 'bg-yellow-100' :
-            'bg-red-100'
-          }`}>
-            {decision.type === 'approved' && <CheckCircleIcon className="h-8 w-8 text-green-600" />}
-            {decision.type === 'pending' && <ClockIcon className="h-8 w-8 text-yellow-600" />}
-            {decision.type === 'declined' && <XCircleIcon className="h-8 w-8 text-red-600" />}
+          <div
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+              decision.type === 'approved'
+                ? 'bg-green-100'
+                : decision.type === 'pending'
+                ? 'bg-yellow-100'
+                : 'bg-red-100'
+            }`}
+          >
+            {decision.type === 'approved' && (
+              <CheckCircleIcon className="h-8 w-8 text-green-600" />
+            )}
+            {decision.type === 'pending' && (
+              <ClockIcon className="h-8 w-8 text-yellow-600" />
+            )}
+            {decision.type === 'declined' && (
+              <XCircleIcon className="h-8 w-8 text-red-600" />
+            )}
           </div>
-          
-          <h1 className={`text-3xl font-bold sm:text-4xl mb-4 ${
-            decision.type === 'approved' ? 'text-green-800' :
-            decision.type === 'pending' ? 'text-yellow-800' :
-            'text-red-800'
-          }`}>
+
+          <h1
+            className={`text-3xl font-bold sm:text-4xl mb-4 ${
+              decision.type === 'approved'
+                ? 'text-green-800'
+                : decision.type === 'pending'
+                ? 'text-yellow-800'
+                : 'text-red-800'
+            }`}
+          >
             {decision.title}
           </h1>
-          
-          <p className="text-lg text-gray-600 mb-2">
-            {decision.message}
-          </p>
-          
+
+          <p className="text-lg text-gray-600 mb-2">{decision.message}</p>
+
           <p className="text-sm text-gray-500 max-w-2xl mx-auto">
             {decision.details}
           </p>
@@ -223,7 +248,9 @@ function ReviewDecision() {
             {decision.nextSteps.map((step, index) => (
               <li key={index} className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary-700">{index + 1}</span>
+                  <span className="text-sm font-medium text-primary-700">
+                    {index + 1}
+                  </span>
                 </div>
                 <span className="text-gray-700">{step}</span>
               </li>
@@ -246,11 +273,10 @@ function ReviewDecision() {
 
         {/* Navigation */}
         <div className="flex justify-center">
-          <button
-            onClick={handleContinue}
-            className="btn-primary px-8 py-3"
-          >
-            {decision.type === 'approved' ? 'Continue to Agreement' : 'Complete Application'}
+          <button onClick={handleContinue} className="btn-primary px-8 py-3">
+            {decision.type === 'approved'
+              ? 'Continue to Agreement'
+              : 'Complete Application'}
           </button>
         </div>
       </div>
@@ -264,8 +290,8 @@ function ReviewDecision() {
           Review & Submit Application
         </h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Please review your application details below and confirm the declarations 
-          before submitting your credit application.
+          Please review your application details below and confirm the
+          declarations before submitting your credit application.
         </p>
       </div>
 
@@ -289,17 +315,29 @@ function ReviewDecision() {
             {state.selectedProducts.map((productId) => {
               let productDetails = null;
               let amount = 0;
-              
-              if (productId === 'term-loan' && state.applicationDetails?.termLoan) {
+
+              if (
+                productId === 'term-loan' &&
+                state.applicationDetails?.termLoan
+              ) {
                 productDetails = state.applicationDetails.termLoan;
                 amount = parseFloat(productDetails.amountRequested) || 0;
-              } else if (productId === 'green-loan' && state.applicationDetails?.greenLoan) {
+              } else if (
+                productId === 'green-loan' &&
+                state.applicationDetails?.greenLoan
+              ) {
                 productDetails = state.applicationDetails.greenLoan;
                 amount = parseFloat(productDetails.amountRequested) || 0;
-              } else if (productId === 'business-overdraft' && state.applicationDetails?.overdraft) {
+              } else if (
+                productId === 'business-overdraft' &&
+                state.applicationDetails?.overdraft
+              ) {
                 productDetails = state.applicationDetails.overdraft;
                 amount = parseFloat(productDetails.limitRequested) || 0;
-              } else if (productId === 'business-credit-card' && state.applicationDetails?.creditCard) {
+              } else if (
+                productId === 'business-credit-card' &&
+                state.applicationDetails?.creditCard
+              ) {
                 productDetails = state.applicationDetails.creditCard;
                 amount = parseFloat(productDetails.limitRequested) || 0;
               }
@@ -308,7 +346,9 @@ function ReviewDecision() {
                 <div key={productId} className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-gray-900">
-                      {productId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {productId
+                        .replace('-', ' ')
+                        .replace(/\b\w/g, (l) => l.toUpperCase())}
                     </span>
                     <span className="font-semibold text-primary-600">
                       {formatCurrency(amount)}
@@ -316,21 +356,39 @@ function ReviewDecision() {
                   </div>
                   {productDetails && (
                     <div className="mt-2 text-sm text-gray-600">
-                      {productId.includes('loan') && productDetails.purposeOfCredit && (
-                        <div>Purpose: {productDetails.purposeOfCredit}</div>
-                      )}
-                      {productId.includes('loan') && productDetails.repaymentTerm && (
-                        <div>Term: {productDetails.repaymentTerm} months</div>
-                      )}
-                      {productId === 'green-loan' && productDetails.greenPurposeCategory && (
-                        <div>Green Category: {productDetails.greenPurposeCategory}</div>
-                      )}
-                      {productId === 'business-overdraft' && productDetails.overdraftPurpose && (
-                        <div>Purpose: {productDetails.overdraftPurpose.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                      )}
-                      {productId === 'business-credit-card' && productDetails.cardPurpose && (
-                        <div>Primary Use: {productDetails.cardPurpose.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                      )}
+                      {productId.includes('loan') &&
+                        productDetails.purposeOfCredit && (
+                          <div>Purpose: {productDetails.purposeOfCredit}</div>
+                        )}
+                      {productId.includes('loan') &&
+                        productDetails.repaymentTerm && (
+                          <div>Term: {productDetails.repaymentTerm} months</div>
+                        )}
+                      {productId === 'green-loan' &&
+                        productDetails.greenPurposeCategory && (
+                          <div>
+                            Green Category:{' '}
+                            {productDetails.greenPurposeCategory}
+                          </div>
+                        )}
+                      {productId === 'business-overdraft' &&
+                        productDetails.overdraftPurpose && (
+                          <div>
+                            Purpose:{' '}
+                            {productDetails.overdraftPurpose
+                              .replace('-', ' ')
+                              .replace(/\b\w/g, (l) => l.toUpperCase())}
+                          </div>
+                        )}
+                      {productId === 'business-credit-card' &&
+                        productDetails.cardPurpose && (
+                          <div>
+                            Primary Use:{' '}
+                            {productDetails.cardPurpose
+                              .replace('-', ' ')
+                              .replace(/\b\w/g, (l) => l.toUpperCase())}
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
@@ -360,20 +418,28 @@ function ReviewDecision() {
             <div>
               <span className="text-gray-500">Applicant Type:</span>
               <div className="font-medium">
-                {state.applicantType?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                {state.applicantType
+                  ?.replace('-', ' ')
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </div>
             </div>
             <div>
               <span className="text-gray-500">Business Name:</span>
-              <div className="font-medium">{state.businessInfo.businessName}</div>
+              <div className="font-medium">
+                {state.businessInfo.businessName}
+              </div>
             </div>
             <div>
               <span className="text-gray-500">Industry:</span>
-              <div className="font-medium">{state.businessInfo.industryType}</div>
+              <div className="font-medium">
+                {state.businessInfo.industryType}
+              </div>
             </div>
             <div>
               <span className="text-gray-500">Annual Turnover:</span>
-              <div className="font-medium">{formatCurrency(state.businessInfo.annualTurnover || 0)}</div>
+              <div className="font-medium">
+                {formatCurrency(state.businessInfo.annualTurnover || 0)}
+              </div>
             </div>
           </div>
         </div>
@@ -407,19 +473,23 @@ function ReviewDecision() {
         <h2 className="text-xl font-semibold text-gray-900 mb-6">
           Declarations & Consent
         </h2>
-        
+
         <div className="space-y-4">
           <div className="flex items-start space-x-3">
             <input
               type="checkbox"
               id="truthfulness"
               checked={declarations.truthfulness || false}
-              onChange={(e) => handleDeclarationChange('truthfulness', e.target.checked)}
+              onChange={(e) =>
+                handleDeclarationChange('truthfulness', e.target.checked)
+              }
               className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
             <label htmlFor="truthfulness" className="text-sm text-gray-700">
-              I confirm that all information provided in this application is true, accurate, and complete to the best of my knowledge. 
-              I understand that providing false or misleading information may result in application rejection or loan recall.
+              I confirm that all information provided in this application is
+              true, accurate, and complete to the best of my knowledge. I
+              understand that providing false or misleading information may
+              result in application rejection or loan recall.
             </label>
           </div>
           {errors.truthfulness && (
@@ -431,12 +501,16 @@ function ReviewDecision() {
               type="checkbox"
               id="gdprConsent"
               checked={declarations.gdprConsent || false}
-              onChange={(e) => handleDeclarationChange('gdprConsent', e.target.checked)}
+              onChange={(e) =>
+                handleDeclarationChange('gdprConsent', e.target.checked)
+              }
               className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
             <label htmlFor="gdprConsent" className="text-sm text-gray-700">
-              I consent to the collection, processing, and storage of my personal data in accordance with GDPR regulations. 
-              I understand my rights regarding data protection and how my information will be used.
+              I consent to the collection, processing, and storage of my
+              personal data in accordance with GDPR regulations. I understand my
+              rights regarding data protection and how my information will be
+              used.
             </label>
           </div>
           {errors.gdprConsent && (
@@ -448,11 +522,17 @@ function ReviewDecision() {
               type="checkbox"
               id="creditCheckConsent"
               checked={declarations.creditCheckConsent || false}
-              onChange={(e) => handleDeclarationChange('creditCheckConsent', e.target.checked)}
+              onChange={(e) =>
+                handleDeclarationChange('creditCheckConsent', e.target.checked)
+              }
               className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
-            <label htmlFor="creditCheckConsent" className="text-sm text-gray-700">
-              I authorize the bank to conduct credit checks with the Irish Credit Bureau (ICB) and other relevant credit reference agencies. 
+            <label
+              htmlFor="creditCheckConsent"
+              className="text-sm text-gray-700"
+            >
+              I authorize the bank to conduct credit checks with the Irish
+              Credit Bureau (ICB) and other relevant credit reference agencies.
               I understand this may impact my credit file.
             </label>
           </div>
@@ -465,20 +545,25 @@ function ReviewDecision() {
               type="checkbox"
               id="termsAndConditions"
               checked={declarations.termsAndConditions || false}
-              onChange={(e) => handleDeclarationChange('termsAndConditions', e.target.checked)}
+              onChange={(e) =>
+                handleDeclarationChange('termsAndConditions', e.target.checked)
+              }
               className="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
-            <label htmlFor="termsAndConditions" className="text-sm text-gray-700">
+            <label
+              htmlFor="termsAndConditions"
+              className="text-sm text-gray-700"
+            >
               I have read, understood, and agree to the{' '}
-              <button 
+              <button
                 type="button"
                 onClick={() => window.open('/terms', '_blank')}
                 className="text-primary-600 hover:text-primary-700 underline bg-transparent border-none p-0 cursor-pointer"
               >
                 Terms and Conditions
-              </button>
-              {' '}and{' '}
-              <button 
+              </button>{' '}
+              and{' '}
+              <button
                 type="button"
                 onClick={() => window.open('/privacy', '_blank')}
                 className="text-primary-600 hover:text-primary-700 underline bg-transparent border-none p-0 cursor-pointer"
@@ -510,9 +595,25 @@ function ReviewDecision() {
         >
           {isSubmitting ? (
             <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Processing Application...
             </>
@@ -520,19 +621,6 @@ function ReviewDecision() {
             'Submit Application'
           )}
         </button>
-      </div>
-
-      {/* Legal Notice */}
-      <div className="bg-amber-50 rounded-lg p-6">
-        <h3 className="text-sm font-medium text-amber-800 mb-2">
-          Legal Notice
-        </h3>
-        <ul className="text-sm text-amber-700 space-y-1">
-          <li>• This bank is regulated by the Central Bank of Ireland</li>
-          <li>• Credit is subject to approval and lending criteria</li>
-          <li>• You have the right to appeal declined applications within 21 days</li>
-          <li>• All credit decisions comply with Irish and EU lending regulations</li>
-        </ul>
       </div>
     </div>
   );

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApplication, applicationActions } from '../../context/ApplicationContext';
-import { 
-  DocumentIcon, 
-  CloudArrowUpIcon, 
+import {
+  useApplication,
+  applicationActions,
+} from '../../context/ApplicationContext';
+import {
+  DocumentIcon,
+  CloudArrowUpIcon,
   CheckCircleIcon,
   XCircleIcon,
-  EyeIcon
+  EyeIcon,
 } from '@heroicons/react/24/outline';
 
 // Document types based on applicant type and products
@@ -15,10 +18,10 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
     {
       id: 'identity-verification',
       name: 'Identity Verification',
-      description: 'Passport or Driver\'s License',
+      description: "Passport or Driver's License",
       required: true,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'address-verification',
@@ -26,8 +29,8 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Recent Utility Bill or Bank Statement (last 3 months)',
       required: true,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
-    }
+      maxSize: '10MB',
+    },
   ];
 
   const businessDocuments = [
@@ -37,15 +40,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Last Year-End Financials',
       required: true,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
-    },
-    {
-      id: 'management-accounts',
-      name: 'Management Accounts',
-      description: 'Recent Management Accounts (last 3 months)',
-      required: true,
-      acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'bank-statements',
@@ -53,7 +48,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: '6 months business bank statements',
       required: true,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'cash-flow-forecast',
@@ -61,21 +56,13 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: '12-month cash flow projection',
       required: false,
       acceptedTypes: '.pdf,.xlsx,.xls',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
-    {
-      id: 'business-plan',
-      name: 'Business Plan',
-      description: 'Current business plan (optional but recommended)',
-      required: false,
-      acceptedTypes: '.pdf',
-      maxSize: '10MB'
-    }
   ];
 
   // Applicant-specific documents
   const applicantSpecificDocs = [];
-  
+
   if (applicantType === 'limited-company') {
     applicantSpecificDocs.push({
       id: 'certificate-incorporation',
@@ -83,7 +70,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Company registration certificate',
       required: true,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
+      maxSize: '10MB',
     });
     applicantSpecificDocs.push({
       id: 'memorandum-articles',
@@ -91,7 +78,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Memorandum and Articles of Association',
       required: true,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     });
   }
 
@@ -102,21 +89,22 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Partnership agreement or deed',
       required: true,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     });
   }
 
   // Product-specific documents
   const productSpecificDocs = [];
-  
+
   if (selectedProducts.includes('green-loan')) {
     productSpecificDocs.push({
       id: 'ber-certificate',
       name: 'BER Certificate',
-      description: 'Building Energy Rating Certificate (for property improvements)',
+      description:
+        'Building Energy Rating Certificate (for property improvements)',
       required: false,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
+      maxSize: '10MB',
     });
     productSpecificDocs.push({
       id: 'environmental-impact',
@@ -124,7 +112,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Documentation showing environmental benefits',
       required: false,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     });
   }
 
@@ -136,7 +124,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Current tax clearance certificate',
       required: false,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'invoices-quotes',
@@ -144,7 +132,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'For specific purchases or equipment',
       required: false,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'collateral-docs',
@@ -152,7 +140,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Property deeds, ownership documents',
       required: false,
       acceptedTypes: '.pdf',
-      maxSize: '10MB'
+      maxSize: '10MB',
     },
     {
       id: 'additional-documents',
@@ -160,8 +148,8 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       description: 'Any other relevant documentation',
       required: false,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png,.xlsx,.xls',
-      maxSize: '10MB'
-    }
+      maxSize: '10MB',
+    },
   ];
 
   return [
@@ -169,14 +157,16 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
     ...applicantSpecificDocs,
     ...businessDocuments,
     ...productSpecificDocs,
-    ...optionalDocuments
+    ...optionalDocuments,
   ];
 };
 
 function DocumentUpload() {
   const navigate = useNavigate();
   const { state, dispatch } = useApplication();
-  const [uploadedDocuments, setUploadedDocuments] = useState(state.uploadedDocuments || []);
+  const [uploadedDocuments, setUploadedDocuments] = useState(
+    state.uploadedDocuments || []
+  );
   const [dragOver, setDragOver] = useState(null);
   const [uploadProgress, setUploadProgress] = useState({});
   const [errors, setErrors] = useState({});
@@ -187,19 +177,26 @@ function DocumentUpload() {
     }
   }, [state.applicantType, state.selectedProducts, navigate]);
 
-  const documentTypes = getRequiredDocuments(state.applicantType, state.selectedProducts);
-  const requiredDocuments = documentTypes.filter(doc => doc.required);
-  const optionalDocuments = documentTypes.filter(doc => !doc.required);
+  const documentTypes = getRequiredDocuments(
+    state.applicantType,
+    state.selectedProducts
+  );
+  const requiredDocuments = documentTypes.filter((doc) => doc.required);
+  const optionalDocuments = documentTypes.filter((doc) => !doc.required);
 
   const validateFiles = () => {
     const newErrors = {};
-    
+
     // Check if all required documents are uploaded
-    const uploadedDocIds = uploadedDocuments.map(doc => doc.documentType);
-    const missingRequired = requiredDocuments.filter(doc => !uploadedDocIds.includes(doc.id));
-    
+    const uploadedDocIds = uploadedDocuments.map((doc) => doc.documentType);
+    const missingRequired = requiredDocuments.filter(
+      (doc) => !uploadedDocIds.includes(doc.id)
+    );
+
     if (missingRequired.length > 0) {
-      newErrors.required = `Please upload the following required documents: ${missingRequired.map(doc => doc.name).join(', ')}`;
+      newErrors.required = `Please upload the following required documents: ${missingRequired
+        .map((doc) => doc.name)
+        .join(', ')}`;
     }
 
     setErrors(newErrors);
@@ -208,7 +205,9 @@ function DocumentUpload() {
 
   const handleNext = () => {
     if (validateFiles()) {
-      dispatch(applicationActions.updateApplicationDetails({ uploadedDocuments }));
+      dispatch(
+        applicationActions.updateApplicationDetails({ uploadedDocuments })
+      );
       navigate('/review-decision');
     }
   };
@@ -219,16 +218,16 @@ function DocumentUpload() {
 
   const handleFileUpload = (documentType, files) => {
     const fileList = Array.from(files);
-    
+
     fileList.forEach((file, index) => {
-      const docType = documentTypes.find(d => d.id === documentType);
-      
+      const docType = documentTypes.find((d) => d.id === documentType);
+
       // Validate file type
       const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
       if (!docType.acceptedTypes.includes(fileExtension)) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          [documentType]: `Invalid file type. Accepted types: ${docType.acceptedTypes}`
+          [documentType]: `Invalid file type. Accepted types: ${docType.acceptedTypes}`,
         }));
         return;
       }
@@ -236,15 +235,15 @@ function DocumentUpload() {
       // Validate file size (10MB = 10 * 1024 * 1024 bytes)
       const maxSizeBytes = 10 * 1024 * 1024;
       if (file.size > maxSizeBytes) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          [documentType]: `File size exceeds ${docType.maxSize} limit`
+          [documentType]: `File size exceeds ${docType.maxSize} limit`,
         }));
         return;
       }
 
       // Clear errors for this document type
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[documentType];
         return newErrors;
@@ -252,16 +251,16 @@ function DocumentUpload() {
 
       // Simulate file upload with progress
       const documentId = `${documentType}-${Date.now()}-${index}`;
-      
-      setUploadProgress(prev => ({ ...prev, [documentId]: 0 }));
-      
+
+      setUploadProgress((prev) => ({ ...prev, [documentId]: 0 }));
+
       // Simulate upload progress
       const interval = setInterval(() => {
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           const currentProgress = prev[documentId] || 0;
           if (currentProgress >= 100) {
             clearInterval(interval);
-            
+
             // Add document to uploaded list
             const newDocument = {
               id: documentId,
@@ -270,25 +269,27 @@ function DocumentUpload() {
               fileSize: file.size,
               uploadDate: new Date().toISOString(),
               status: 'uploaded',
-              file: file // In real app, this would be a URL or file reference
+              file: file, // In real app, this would be a URL or file reference
             };
-            
-            setUploadedDocuments(prev => {
+
+            setUploadedDocuments((prev) => {
               // Remove existing document of same type if replacing
-              const filtered = prev.filter(doc => doc.documentType !== documentType);
+              const filtered = prev.filter(
+                (doc) => doc.documentType !== documentType
+              );
               return [...filtered, newDocument];
             });
-            
+
             // Remove from progress tracking
-            setUploadProgress(prev => {
+            setUploadProgress((prev) => {
               const newProgress = { ...prev };
               delete newProgress[documentId];
               return newProgress;
             });
-            
+
             return prev;
           }
-          
+
           return { ...prev, [documentId]: currentProgress + 10 };
         });
       }, 200);
@@ -312,15 +313,15 @@ function DocumentUpload() {
   };
 
   const removeDocument = (documentId) => {
-    setUploadedDocuments(prev => prev.filter(doc => doc.id !== documentId));
+    setUploadedDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
   };
 
   const isDocumentUploaded = (documentType) => {
-    return uploadedDocuments.some(doc => doc.documentType === documentType);
+    return uploadedDocuments.some((doc) => doc.documentType === documentType);
   };
 
   const getUploadedDocument = (documentType) => {
-    return uploadedDocuments.find(doc => doc.documentType === documentType);
+    return uploadedDocuments.find((doc) => doc.documentType === documentType);
   };
 
   const formatFileSize = (bytes) => {
@@ -335,11 +336,21 @@ function DocumentUpload() {
     const isUploaded = isDocumentUploaded(docType.id);
     const uploadedDoc = getUploadedDocument(docType.id);
     const hasError = errors[docType.id];
-    const progressKeys = Object.keys(uploadProgress).filter(key => key.startsWith(docType.id));
+    const progressKeys = Object.keys(uploadProgress).filter((key) =>
+      key.startsWith(docType.id)
+    );
     const inProgress = progressKeys.length > 0;
 
     return (
-      <div className={`card ${isUploaded ? 'border-green-200 bg-green-50' : hasError ? 'border-red-200 bg-red-50' : ''}`}>
+      <div
+        className={`card ${
+          isUploaded
+            ? 'border-green-200 bg-green-50'
+            : hasError
+            ? 'border-red-200 bg-red-50'
+            : ''
+        }`}
+      >
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
@@ -352,9 +363,9 @@ function DocumentUpload() {
                 <CheckCircleIcon className="h-5 w-5 text-green-500" />
               )}
             </div>
-            
+
             <p className="text-sm text-gray-600 mb-3">{docType.description}</p>
-            
+
             <div className="text-xs text-gray-500">
               Accepted: {docType.acceptedTypes} • Max size: {docType.maxSize}
             </div>
@@ -365,7 +376,11 @@ function DocumentUpload() {
         {!isUploaded && !inProgress && (
           <div
             className={`mt-4 border-2 border-dashed rounded-lg p-6 text-center transition-colors
-              ${dragOver === docType.id ? 'border-primary-400 bg-primary-50' : 'border-gray-300'}
+              ${
+                dragOver === docType.id
+                  ? 'border-primary-400 bg-primary-50'
+                  : 'border-gray-300'
+              }
               ${hasError ? 'border-red-300' : 'hover:border-primary-400'}
             `}
             onDragOver={(e) => handleDragOver(e, docType.id)}
@@ -391,11 +406,11 @@ function DocumentUpload() {
         {/* Progress Indicator */}
         {inProgress && (
           <div className="mt-4">
-            {progressKeys.map(key => (
+            {progressKeys.map((key) => (
               <div key={key} className="space-y-2">
                 <div className="text-sm text-gray-600">Uploading...</div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-primary-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress[key]}%` }}
                   />
@@ -411,13 +426,19 @@ function DocumentUpload() {
             <div className="flex items-center space-x-3">
               <DocumentIcon className="h-5 w-5 text-green-600" />
               <div>
-                <p className="text-sm font-medium text-gray-900">{uploadedDoc.fileName}</p>
-                <p className="text-xs text-gray-500">{formatFileSize(uploadedDoc.fileSize)}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {uploadedDoc.fileName}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {formatFileSize(uploadedDoc.fileSize)}
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => {/* Implement file preview */}}
+                onClick={() => {
+                  /* Implement file preview */
+                }}
                 className="text-primary-600 hover:text-primary-700"
                 title="Preview"
               >
@@ -436,9 +457,7 @@ function DocumentUpload() {
 
         {/* Error Message */}
         {hasError && (
-          <div className="mt-3 text-sm text-red-600">
-            {hasError}
-          </div>
+          <div className="mt-3 text-sm text-red-600">{hasError}</div>
         )}
       </div>
     );
@@ -451,7 +470,7 @@ function DocumentUpload() {
           Document Upload
         </h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Please upload the required documents to complete your application. 
+          Please upload the required documents to complete your application.
           Documents marked with * are mandatory.
         </p>
       </div>
@@ -464,12 +483,24 @@ function DocumentUpload() {
               Upload Progress
             </h3>
             <p className="text-sm text-blue-600">
-              {uploadedDocuments.filter(doc => requiredDocuments.some(req => req.id === doc.documentType)).length} of {requiredDocuments.length} required documents uploaded
+              {
+                uploadedDocuments.filter((doc) =>
+                  requiredDocuments.some((req) => req.id === doc.documentType)
+                ).length
+              }{' '}
+              of {requiredDocuments.length} required documents uploaded
             </p>
           </div>
           <div className="text-right">
             <div className="text-lg font-bold text-blue-800">
-              {Math.round((uploadedDocuments.filter(doc => requiredDocuments.some(req => req.id === doc.documentType)).length / requiredDocuments.length) * 100)}%
+              {Math.round(
+                (uploadedDocuments.filter((doc) =>
+                  requiredDocuments.some((req) => req.id === doc.documentType)
+                ).length /
+                  requiredDocuments.length) *
+                  100
+              )}
+              %
             </div>
             <div className="text-xs text-blue-600">Complete</div>
           </div>
@@ -483,7 +514,11 @@ function DocumentUpload() {
         </h2>
         <div className="space-y-4">
           {requiredDocuments.map((docType) => (
-            <DocumentUploadCard key={docType.id} docType={docType} isRequired={true} />
+            <DocumentUploadCard
+              key={docType.id}
+              docType={docType}
+              isRequired={true}
+            />
           ))}
         </div>
       </div>
@@ -498,7 +533,11 @@ function DocumentUpload() {
         </h2>
         <div className="space-y-4">
           {optionalDocuments.map((docType) => (
-            <DocumentUploadCard key={docType.id} docType={docType} isRequired={false} />
+            <DocumentUploadCard
+              key={docType.id}
+              docType={docType}
+              isRequired={false}
+            />
           ))}
         </div>
       </div>
@@ -512,16 +551,10 @@ function DocumentUpload() {
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <button
-          onClick={handleBack}
-          className="btn-secondary px-6 py-3"
-        >
+        <button onClick={handleBack} className="btn-secondary px-6 py-3">
           Back
         </button>
-        <button
-          onClick={handleNext}
-          className="btn-primary px-8 py-3"
-        >
+        <button onClick={handleNext} className="btn-primary px-8 py-3">
           Continue to Review
         </button>
       </div>
@@ -533,8 +566,12 @@ function DocumentUpload() {
         </h3>
         <ul className="text-sm text-green-700 space-y-1">
           <li>• All documents are encrypted during upload and storage</li>
-          <li>• Files are processed securely in Ireland under GDPR compliance</li>
-          <li>• Documents are automatically deleted after application processing</li>
+          <li>
+            • Files are processed securely in Ireland under GDPR compliance
+          </li>
+          <li>
+            • Documents are automatically deleted after application processing
+          </li>
           <li>• Only authorized personnel can access your documentation</li>
         </ul>
       </div>

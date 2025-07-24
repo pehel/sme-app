@@ -129,10 +129,10 @@ const MOCK_USERS = {
     },
   },
   // Relationship Managers
-  'rm1@bank.com': {
+  'rm@bank.com': {
     id: 'rm_001',
-    email: 'rm1@bank.com',
-    password: 'rmpass123',
+    email: 'rm@bank.com',
+    password: 'pass',
     role: USER_ROLES.RM,
     name: "Michael O'Connor",
     phone: '+353-85-111-2222',
@@ -147,7 +147,7 @@ const MOCK_USERS = {
   'rm2@bank.com': {
     id: 'rm_002',
     email: 'rm2@bank.com',
-    password: 'rmpass123',
+    password: 'pass',
     role: USER_ROLES.RM,
     name: 'Lisa Murphy',
     phone: '+353-85-333-4444',

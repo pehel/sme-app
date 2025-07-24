@@ -99,10 +99,10 @@ function Login() {
               <strong>New Customer:</strong> newcustomer@test.com / password
             </div>
             <div>
-              <strong>RM:</strong> rm1@bank.com / rmpass123
+              <strong>RM:</strong> rm@bank.com / pass
             </div>
             <div>
-              <strong>Admin:</strong> admin@bank.com / adminpass123
+              <strong>Admin:</strong> admin@bank.com / pass
             </div>
           </div>
         </div>
@@ -222,34 +222,6 @@ function Login() {
             </div>
           )}
 
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <button
-                type="button"
-                className="font-medium text-blue-600 hover:text-blue-500"
-                disabled
-              >
-                Forgot password?
-              </button>
-            </div>
-          </div>
-
           {/* Submit Button */}
           <div>
             <button
@@ -288,9 +260,7 @@ function Login() {
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            Secured with 256-bit SSL encryption and multi-factor authentication
-          </p>
+          <p className="text-xs text-gray-500">Developed by Rajat</p>
         </div>
       </div>
     </div>

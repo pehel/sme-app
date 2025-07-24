@@ -5,13 +5,14 @@ import {
   ShieldCheckIcon,
   ArrowLeftIcon,
   ClockIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 
 function MFAVerify() {
   const navigate = useNavigate();
-  const { verifyMFA, generateOTP, tempCredentials, mfaRequired, isLoading } = useAuth();
-  
+  const { verifyMFA, generateOTP, tempCredentials, mfaRequired, isLoading } =
+    useAuth();
+
   const [otpCode, setOtpCode] = useState('');
   const [errors, setErrors] = useState({});
   const [attempts, setAttempts] = useState(0);
@@ -32,14 +33,20 @@ function MFAVerify() {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else {
-      setErrors({ expired: 'Your verification code has expired. Please request a new one.' });
+      setErrors({
+        expired:
+          'Your verification code has expired. Please request a new one.',
+      });
     }
   }, [timeLeft]);
 
   // Resend cooldown
   useEffect(() => {
     if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+      const timer = setTimeout(
+        () => setResendCooldown(resendCooldown - 1),
+        1000
+      );
       return () => clearTimeout(timer);
     } else {
       setCanResend(true);
@@ -48,14 +55,17 @@ function MFAVerify() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!otpCode || otpCode.length !== 6) {
       setErrors({ otp: 'Please enter a 6-digit verification code' });
       return;
     }
 
     if (timeLeft <= 0) {
-      setErrors({ expired: 'Your verification code has expired. Please request a new one.' });
+      setErrors({
+        expired:
+          'Your verification code has expired. Please request a new one.',
+      });
       return;
     }
 
@@ -63,12 +73,12 @@ function MFAVerify() {
       console.log('🔐 MFA: Calling verifyMFA with code:', otpCode);
       const result = await verifyMFA(otpCode);
       console.log('🔐 MFA: verifyMFA result:', result);
-      
+
       if (result.success) {
         // Redirect based on user role
         const userRole = result.user.role;
         console.log('🔐 MFA: Success, user role:', userRole, 'redirecting...');
-        
+
         // Small delay to ensure state is updated
         setTimeout(() => {
           switch (userRole) {
@@ -90,12 +100,13 @@ function MFAVerify() {
           }
         }, 100); // 100ms delay
       } else {
-        setAttempts(prev => prev + 1);
+        setAttempts((prev) => prev + 1);
         setErrors({ otp: result.error });
-        
+
         if (attempts >= 2) {
-          setErrors({ 
-            locked: 'Too many failed attempts. Please restart the login process.' 
+          setErrors({
+            locked:
+              'Too many failed attempts. Please restart the login process.',
           });
           setTimeout(() => navigate('/login'), 3000);
         }
@@ -111,16 +122,17 @@ function MFAVerify() {
     try {
       generateOTP(); // Generate new OTP
       console.log(`Demo MFA Code: 111111 (always use this for demo)`); // For demo purposes
-      
+
       setTimeLeft(300); // Reset timer
       setCanResend(false);
       setResendCooldown(30); // 30 second cooldown
       setErrors({});
       setOtpCode('');
-      
+
       // Show success message
-      setErrors({ 
-        success: 'A new verification code has been sent to your registered device.' 
+      setErrors({
+        success:
+          'A new verification code has been sent to your registered device.',
       });
     } catch (error) {
       setErrors({ resend: 'Failed to resend code. Please try again.' });
@@ -137,7 +149,7 @@ function MFAVerify() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const maskedContact = tempCredentials?.email 
+  const maskedContact = tempCredentials?.email
     ? tempCredentials.email.replace(/(.{2}).*(@.*)/, '$1***$2')
     : '***@***.com';
 
@@ -177,7 +189,10 @@ function MFAVerify() {
         {/* MFA Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="otp" className="block text-sm font-medium text-gray-700 text-center">
+            <label
+              htmlFor="otp"
+              className="block text-sm font-medium text-gray-700 text-center"
+            >
               Enter 6-digit verification code
             </label>
             <div className="mt-2">
@@ -193,7 +208,7 @@ function MFAVerify() {
                   const value = e.target.value.replace(/\D/g, '');
                   setOtpCode(value);
                   if (errors.otp) {
-                    setErrors(prev => ({ ...prev, otp: undefined }));
+                    setErrors((prev) => ({ ...prev, otp: undefined }));
                   }
                 }}
                 className={`block w-full px-3 py-3 text-center text-2xl tracking-widest border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
@@ -205,7 +220,9 @@ function MFAVerify() {
               />
             </div>
             {errors.otp && (
-              <p className="mt-2 text-sm text-red-600 text-center">{errors.otp}</p>
+              <p className="mt-2 text-sm text-red-600 text-center">
+                {errors.otp}
+              </p>
             )}
           </div>
 
@@ -238,9 +255,17 @@ function MFAVerify() {
           <div>
             <button
               type="submit"
-              disabled={isLoading || timeLeft <= 0 || otpCode.length !== 6 || errors.locked}
+              disabled={
+                isLoading ||
+                timeLeft <= 0 ||
+                otpCode.length !== 6 ||
+                errors.locked
+              }
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                isLoading || timeLeft <= 0 || otpCode.length !== 6 || errors.locked
+                isLoading ||
+                timeLeft <= 0 ||
+                otpCode.length !== 6 ||
+                errors.locked
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700'
               }`}
@@ -270,10 +295,9 @@ function MFAVerify() {
                     : 'text-gray-400 cursor-not-allowed'
                 }`}
               >
-                {resendCooldown > 0 
+                {resendCooldown > 0
                   ? `Resend code (${resendCooldown}s)`
-                  : 'Resend code'
-                }
+                  : 'Resend code'}
               </button>
             </p>
           </div>
@@ -294,7 +318,7 @@ function MFAVerify() {
         {/* Security Notice */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            This additional security step helps protect your account from unauthorized access
+            This can be approved by Bank App or user can setup an MFA app
           </p>
         </div>
 
