@@ -4,6 +4,7 @@ import {
   useApplication,
   applicationActions,
 } from '../../context/ApplicationContext';
+import { useAuth } from '../../context/AuthContext';
 import aiService from '../../services/aiService';
 import {
   CurrencyEuroIcon,
@@ -76,6 +77,7 @@ const products = [
 function ProductSelection() {
   const navigate = useNavigate();
   const { state, dispatch } = useApplication();
+  const { user } = useAuth();
   const [selectedProducts, setSelectedProducts] = useState(
     state.selectedProducts || []
   );
@@ -167,7 +169,19 @@ function ProductSelection() {
     }
 
     dispatch(applicationActions.setSelectedProducts(selectedProducts));
-    navigate('/applicant-type');
+
+    // Skip applicant type selection ONLY for existing customers
+    if (user?.isExistingCustomer && user?.existingData) {
+      console.log('🏃‍♂️ Existing customer, skipping applicant type selection');
+      // Set default applicant type for existing customer
+      dispatch(applicationActions.setApplicantType('limited-company'));
+      navigate('/customer-details');
+    } else {
+      console.log(
+        '🆕 New customer or no existing data, going to applicant type selection'
+      );
+      navigate('/applicant-type');
+    }
   };
 
   const isProductSelected = (productId) => selectedProducts.includes(productId);
@@ -379,21 +393,6 @@ function ProductSelection() {
           <RocketLaunchIcon className="h-5 w-5 mr-2" />
           Continue to Application
         </button>
-      </div>
-
-      {/* Info Section */}
-      <div className="bg-blue-50 rounded-lg p-6">
-        <h3 className="text-sm font-medium text-blue-800 mb-2">
-          Application Information
-        </h3>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li>
-            • This application is fully compliant with Irish and EU regulations
-          </li>
-          <li>• Your data is protected under GDPR guidelines</li>
-          <li>• Credit decisions are typically made within 15 working days</li>
-          <li>• No application fees or early repayment penalties</li>
-        </ul>
       </div>
     </div>
   );

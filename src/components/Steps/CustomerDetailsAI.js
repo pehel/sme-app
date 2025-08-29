@@ -4,6 +4,7 @@ import {
   useApplication,
   applicationActions,
 } from '../../context/ApplicationContext';
+import { useAuth } from '../../context/AuthContext';
 import aiService from '../../services/aiService';
 import BusinessInfoForm from '../Forms/BusinessInfoForm';
 import PersonalInfoForm from '../Forms/PersonalInfoForm';
@@ -18,6 +19,7 @@ import {
 function CustomerDetailsAI() {
   const navigate = useNavigate();
   const { state, dispatch } = useApplication();
+  const { user } = useAuth();
   const [errors, setErrors] = useState({});
   const [businessInfo, setBusinessInfo] = useState(state.businessInfo || {});
   const [personalInfo, setPersonalInfo] = useState(state.personalInfo || {});
@@ -25,12 +27,100 @@ function CustomerDetailsAI() {
   const [lookupResults, setLookupResults] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Redirect if no applicant type selected
+  // Auto-populate data from logged-in user and set applicant type
   useEffect(() => {
-    if (!state.applicantType) {
+    console.log('🔍 CustomerDetailsAI useEffect - user data:', user);
+    console.log('🔍 Current state businessInfo:', state.businessInfo);
+    console.log('🔍 Current state personalInfo:', state.personalInfo);
+    
+    if (user?.existingData && user?.isExistingCustomer) {
+      console.log('🔄 Auto-populating customer data for EXISTING customer');
+      console.log('🔄 User existing data:', user.existingData);
+      
+      // Set applicant type based on business structure (if not already set)
+      if (!state.applicantType) {
+        const defaultApplicantType = 'limited-company'; // Existing customers are typically limited companies
+        console.log('🔄 Setting applicant type for existing customer:', defaultApplicantType);
+        dispatch(applicationActions.setApplicantType(defaultApplicantType));
+      }
+
+      // Auto-populate business info if available and not already populated
+      if (user.existingData.businessInfo && (!state.businessInfo?.businessName || Object.keys(state.businessInfo || {}).length <= 1)) {
+        console.log('🔄 Auto-populating business info for existing customer:', user.existingData.businessInfo);
+        setBusinessInfo(user.existingData.businessInfo);
+        dispatch(applicationActions.updateBusinessInfo(user.existingData.businessInfo));
+      } else if (state.businessInfo && Object.keys(state.businessInfo).length > 0) {
+        console.log('🔄 Using existing business info from state');
+        setBusinessInfo(state.businessInfo);
+      }
+
+      // Auto-populate personal info if available and not already populated  
+      if (user.existingData.personalInfo && (!state.personalInfo?.firstName || Object.keys(state.personalInfo || {}).length <= 3)) {
+        console.log('🔄 Auto-populating personal info for existing customer:', user.existingData.personalInfo);
+        
+        // Transform user personal data to match form structure
+        const userPersonalData = user.existingData.personalInfo;
+        const transformedPersonalInfo = {
+          // For existing customers, we'll put their info as the beneficial owner
+          beneficialOwners: [{
+            fullName: `${userPersonalData.firstName} ${userPersonalData.lastName}`,
+            dateOfBirth: userPersonalData.dateOfBirth,
+            nationality: userPersonalData.nationality,
+            address: `${userPersonalData.address?.street}, ${userPersonalData.address?.city}, ${userPersonalData.address?.county}, ${userPersonalData.address?.postalCode}`,
+            email: userPersonalData.email,
+            phone: userPersonalData.phone,
+            ppsn: userPersonalData.ppsn,
+            position: userPersonalData.position || 'Director',
+            sharePercentage: '100',
+            isDirector: true
+          }],
+          owners: [{
+            fullName: `${userPersonalData.firstName} ${userPersonalData.lastName}`,
+            dateOfBirth: userPersonalData.dateOfBirth,
+            nationality: userPersonalData.nationality,
+            address: `${userPersonalData.address?.street}, ${userPersonalData.address?.city}, ${userPersonalData.address?.county}, ${userPersonalData.address?.postalCode}`,
+            email: userPersonalData.email,
+            phone: userPersonalData.phone,
+            ppsn: userPersonalData.ppsn,
+            occupation: userPersonalData.position || 'Business Owner'
+          }],
+          partners: [] // Empty for existing customers who are typically limited companies
+        };
+        
+        setPersonalInfo(transformedPersonalInfo);
+        dispatch(applicationActions.updatePersonalInfo(transformedPersonalInfo));
+      } else if (state.personalInfo && Object.keys(state.personalInfo).length > 0) {
+        console.log('🔄 Using existing personal info from state');
+        setPersonalInfo(state.personalInfo);
+      }
+    } else if (user && !user.isExistingCustomer) {
+      console.log('🆕 NEW customer - NOT auto-populating customer details');
+      
+      // For new customers, only set applicant type if not already set
+      if (!state.applicantType) {
+        const defaultApplicantType = 'sole-trader'; // New customers often start as sole traders
+        console.log('🔄 Setting applicant type for new customer:', defaultApplicantType);
+        dispatch(applicationActions.setApplicantType(defaultApplicantType));
+      }
+      
+      // Don't auto-populate data for new customers - let them fill forms manually
+      // Still set from state if available (from previous form inputs)
+      if (state.businessInfo) setBusinessInfo(state.businessInfo);
+      if (state.personalInfo) setPersonalInfo(state.personalInfo);
+    } else {
+      console.log('⚠️ No user data or unknown customer type');
+      // Still set from state if available
+      if (state.businessInfo) setBusinessInfo(state.businessInfo);
+      if (state.personalInfo) setPersonalInfo(state.personalInfo);
+    }
+  }, [user, dispatch, state.applicantType, state.businessInfo, state.personalInfo]);
+
+  // Redirect logic - skip applicant type for existing customers with data
+  useEffect(() => {
+    if (!state.applicantType && !user?.existingData) {
       navigate('/applicant-type');
     }
-  }, [state.applicantType, navigate]);
+  }, [state.applicantType, navigate, user]);
 
   // AI-powered company lookup
   const handleCompanyLookup = async (registrationNumber) => {
@@ -112,43 +202,53 @@ function CustomerDetailsAI() {
 
   const validateForm = () => {
     const newErrors = {};
+    
+    // Check if this is an existing customer with auto-populated data
+    const isExistingCustomerWithData = user?.isExistingCustomer && user?.existingData && (
+      user.existingData.businessInfo || user.existingData.personalInfo
+    );
 
-    // Business Info Validation
+    console.log('📝 Validating form - isExistingCustomerWithData:', isExistingCustomerWithData);
+
+    // Business Info Validation - more lenient for existing customers with auto-populated data
     if (!businessInfo.businessName?.trim()) {
       newErrors.businessName = 'Business name is required';
     }
 
-    if (!businessInfo.registeredAddress?.trim()) {
+    if (!isExistingCustomerWithData && !businessInfo.registeredAddress?.trim()) {
       newErrors.registeredAddress = 'Registered address is required';
     }
 
     if (
+      !isExistingCustomerWithData &&
       state.applicantType === 'limited-company' &&
       !businessInfo.registrationNumber?.trim()
     ) {
       newErrors.registrationNumber = 'Company registration number is required';
     }
 
-    if (!businessInfo.industry?.trim()) {
+    if (!isExistingCustomerWithData && !businessInfo.industry?.trim()) {
       newErrors.industry = 'Industry is required';
     }
 
-    // Personal Info Validation
-    if (state.applicantType === 'sole-trader') {
-      if (!personalInfo.owners || personalInfo.owners.length === 0) {
-        newErrors.owners = 'Owner information is required';
-      }
-    } else if (state.applicantType === 'partnership') {
-      if (!personalInfo.partners || personalInfo.partners.length < 2) {
-        newErrors.partners = 'At least 2 partners are required';
-      }
-    } else if (state.applicantType === 'limited-company') {
-      if (
-        !personalInfo.beneficialOwners ||
-        personalInfo.beneficialOwners.length === 0
-      ) {
-        newErrors.beneficialOwners =
-          'Beneficial owners/directors information is required';
+    // Personal Info Validation - more lenient for existing customers with auto-populated data
+    if (!isExistingCustomerWithData) {
+      if (state.applicantType === 'sole-trader') {
+        if (!personalInfo.owners || personalInfo.owners.length === 0) {
+          newErrors.owners = 'Owner information is required';
+        }
+      } else if (state.applicantType === 'partnership') {
+        if (!personalInfo.partners || personalInfo.partners.length < 2) {
+          newErrors.partners = 'At least 2 partners are required';
+        }
+      } else if (state.applicantType === 'limited-company') {
+        if (
+          !personalInfo.beneficialOwners ||
+          personalInfo.beneficialOwners.length === 0
+        ) {
+          newErrors.beneficialOwners =
+            'Beneficial owners/directors information is required';
+        }
       }
     }
 
@@ -157,7 +257,15 @@ function CustomerDetailsAI() {
   };
 
   const handleContinue = async () => {
-    if (validateForm()) {
+    console.log('🔄 Continue button clicked');
+    console.log('📋 Current form state:', { businessInfo, personalInfo, applicantType: state.applicantType });
+    
+    const isValid = validateForm();
+    console.log('✅ Form validation result:', isValid);
+    console.log('❌ Validation errors:', errors);
+    
+    if (isValid) {
+      console.log('✅ Form is valid, proceeding to next step');
       // Get AI suggestions for form completion
       try {
         const suggestions = await aiService.suggestFormData(
@@ -177,14 +285,18 @@ function CustomerDetailsAI() {
 
         dispatch(applicationActions.updateBusinessInfo(enhancedBusinessInfo));
         dispatch(applicationActions.updatePersonalInfo(personalInfo));
+        console.log('🚀 Navigating to application details');
         navigate('/application-details');
       } catch (error) {
         console.error('AI suggestions failed:', error);
         // Continue without AI enhancement
         dispatch(applicationActions.updateBusinessInfo(businessInfo));
         dispatch(applicationActions.updatePersonalInfo(personalInfo));
+        console.log('🚀 Navigating to application details (without AI)');
         navigate('/application-details');
       }
+    } else {
+      console.log('❌ Form validation failed, not proceeding');
     }
   };
 
