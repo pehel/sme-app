@@ -303,7 +303,8 @@ function DocumentUploadSimplified() {
 
       console.log('Payload being dispatched:', payload);
       dispatch(applicationActions.updateDocuments(payload));
-      navigate('/review-decision');
+      // Navigate to director notification to show email process
+      navigate('/director-notification');
     }
   };
 
@@ -637,7 +638,7 @@ function DocumentUploadSimplified() {
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
-          Review Application
+          Submit for Review
         </button>
       </div>
     </div>

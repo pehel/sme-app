@@ -32,6 +32,7 @@ import MultiPartyVerificationWrapper from './components/Steps/MultiPartyVerifica
 import ReviewDecision from './components/Steps/ReviewDecision';
 import CreditAgreement from './components/Steps/CreditAgreement';
 import Completion from './components/Steps/Completion';
+import DirectorNotification from './components/pages/DirectorNotification';
 
 // Route Guards
 function ProtectedRoute({ children, allowedRoles = [] }) {
@@ -241,6 +242,14 @@ function AppContent() {
           <Layout>
             <Completion />
             <AIAssistant currentStep="completion" />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/director-notification" element={
+        <ProtectedRoute allowedRoles={[USER_ROLES.CUSTOMER]}>
+          <Layout>
+            <DirectorNotification />
+            <AIAssistant currentStep="director-notification" />
           </Layout>
         </ProtectedRoute>
       } />

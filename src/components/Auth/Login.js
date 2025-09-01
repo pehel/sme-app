@@ -93,16 +93,16 @@ function Login() {
           </h3>
           <div className="text-xs text-yellow-700 space-y-1">
             <div>
-              <strong>Customer:</strong> customer@test.com / password
+              <strong>Customer:</strong> customer@test.com / smebanking
             </div>
             <div>
-              <strong>New Customer:</strong> newcustomer@test.com / password
+              <strong>New Customer:</strong> newcustomer@test.com / smebanking
             </div>
             <div>
-              <strong>RM:</strong> rm@bank.com / pass
+              <strong>RM:</strong> rm@bank.com / smebanking
             </div>
             <div>
-              <strong>Admin:</strong> admin@bank.com / pass
+              <strong>Admin:</strong> admin@bank.com / smebanking
             </div>
           </div>
         </div>
