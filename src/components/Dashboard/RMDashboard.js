@@ -16,7 +16,7 @@ import {
   CalendarDaysIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 function RMDashboard() {
@@ -37,7 +37,7 @@ function RMDashboard() {
         const mockApplications = [
           {
             id: 'APP-2024-001',
-            customerName: 'John Smith',
+            customerName: 'Joe Bloggs',
             businessName: 'Tech Solutions Ltd',
             email: 'john@techsolutions.ie',
             phone: '+353-87-123-4567',
@@ -51,11 +51,11 @@ function RMDashboard() {
             estimatedDecision: new Date('2024-01-20'),
             riskScore: 'MEDIUM',
             completionPercentage: 100,
-            notes: 'Established tech company, strong financials'
+            notes: 'Established tech company, strong financials',
           },
           {
             id: 'APP-2024-002',
-            customerName: 'Sarah O\'Connor',
+            customerName: "Sarah O'Connor",
             businessName: 'Green Energy Solutions',
             email: 'sarah@greenenergy.ie',
             phone: '+353-87-234-5678',
@@ -69,7 +69,7 @@ function RMDashboard() {
             estimatedDecision: new Date('2024-01-25'),
             riskScore: 'LOW',
             completionPercentage: 100,
-            notes: 'Renewable energy sector, government incentives available'
+            notes: 'Renewable energy sector, government incentives available',
           },
           {
             id: 'APP-2024-003',
@@ -87,7 +87,7 @@ function RMDashboard() {
             estimatedDecision: new Date('2024-01-22'),
             riskScore: 'MEDIUM',
             completionPercentage: 100,
-            notes: 'Retail business, seasonal variations in revenue'
+            notes: 'Retail business, seasonal variations in revenue',
           },
           {
             id: 'APP-2024-004',
@@ -105,8 +105,8 @@ function RMDashboard() {
             estimatedDecision: null,
             riskScore: 'LOW',
             completionPercentage: 100,
-            notes: 'Service-based business, low risk profile'
-          }
+            notes: 'Service-based business, low risk profile',
+          },
         ];
         setApplications(mockApplications);
         setFilteredApplications(mockApplications);
@@ -123,17 +123,18 @@ function RMDashboard() {
 
     // Apply search filter
     if (searchTerm) {
-      filtered = filtered.filter(app =>
-        app.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.email.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (app) =>
+          app.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Apply status filter
     if (statusFilter !== 'ALL') {
-      filtered = filtered.filter(app => app.status === statusFilter);
+      filtered = filtered.filter((app) => app.status === statusFilter);
     }
 
     // Apply sorting
@@ -227,7 +228,7 @@ function RMDashboard() {
     if (amount === 0) return 'Service-based';
     return new Intl.NumberFormat('en-IE', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
     }).format(amount);
   };
 
@@ -236,15 +237,17 @@ function RMDashboard() {
     return new Intl.DateTimeFormat('en-IE', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     }).format(date);
   };
 
   const getSortIcon = (field) => {
     if (sortField !== field) return null;
-    return sortDirection === 'asc' ? 
-      <ArrowUpIcon className="h-4 w-4" /> : 
-      <ArrowDownIcon className="h-4 w-4" />;
+    return sortDirection === 'asc' ? (
+      <ArrowUpIcon className="h-4 w-4" />
+    ) : (
+      <ArrowDownIcon className="h-4 w-4" />
+    );
   };
 
   if (isLoading) {
@@ -267,13 +270,19 @@ function RMDashboard() {
             <div className="flex items-center">
               <BuildingOfficeIcon className="h-8 w-8 text-blue-600 mr-3" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">RM Dashboard</h1>
-                <p className="text-sm text-gray-600">Application Review Center</p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  RM Dashboard
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Application Review Center
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.name}
+                </p>
                 <p className="text-xs text-gray-500">Relationship Manager</p>
               </div>
               <button
@@ -323,7 +332,11 @@ function RMDashboard() {
                         Pending Review
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {applications.filter(app => app.status === 'PENDING_REVIEW').length}
+                        {
+                          applications.filter(
+                            (app) => app.status === 'PENDING_REVIEW'
+                          ).length
+                        }
                       </dd>
                     </dl>
                   </div>
@@ -343,7 +356,11 @@ function RMDashboard() {
                         Under Review
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {applications.filter(app => app.status === 'UNDER_REVIEW').length}
+                        {
+                          applications.filter(
+                            (app) => app.status === 'UNDER_REVIEW'
+                          ).length
+                        }
                       </dd>
                     </dl>
                   </div>
@@ -363,7 +380,12 @@ function RMDashboard() {
                         Total Value
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {formatCurrency(applications.reduce((sum, app) => sum + app.totalAmount, 0))}
+                        {formatCurrency(
+                          applications.reduce(
+                            (sum, app) => sum + app.totalAmount,
+                            0
+                          )
+                        )}
                       </dd>
                     </dl>
                   </div>
@@ -409,7 +431,8 @@ function RMDashboard() {
               <div className="flex items-center space-x-2">
                 <FunnelIcon className="h-5 w-5 text-gray-400" />
                 <span className="text-sm text-gray-600">
-                  {filteredApplications.length} of {applications.length} applications
+                  {filteredApplications.length} of {applications.length}{' '}
+                  applications
                 </span>
               </div>
             </div>
@@ -522,7 +545,10 @@ function RMDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <div className="space-y-1">
                             {application.products.map((product) => (
-                              <div key={product} className="text-xs bg-gray-100 rounded px-2 py-1 inline-block mr-1">
+                              <div
+                                key={product}
+                                className="text-xs bg-gray-100 rounded px-2 py-1 inline-block mr-1"
+                              >
                                 {product}
                               </div>
                             ))}
@@ -534,13 +560,21 @@ function RMDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {getStatusIcon(application.status)}
-                            <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
+                            <span
+                              className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                                application.status
+                              )}`}
+                            >
                               {application.status.replace('_', ' ')}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(application.priority)}`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(
+                              application.priority
+                            )}`}
+                          >
                             {application.priority}
                           </span>
                         </td>
@@ -564,7 +598,9 @@ function RMDashboard() {
             ) : (
               <div className="text-center py-12">
                 <DocumentTextIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No applications found</h3>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                  No applications found
+                </h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Try adjusting your search criteria or filters.
                 </p>
@@ -576,14 +612,23 @@ function RMDashboard() {
         {/* Quick Actions */}
         <div className="px-4 sm:px-0 mt-8">
           <div className="bg-white shadow rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Quick Actions
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors">
                 <ClockIcon className="h-6 w-6 text-yellow-500 mr-3" />
                 <div className="text-left">
-                  <p className="text-sm font-medium text-gray-900">Pending Reviews</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Pending Reviews
+                  </p>
                   <p className="text-xs text-gray-500">
-                    {applications.filter(app => app.status === 'PENDING_REVIEW').length} applications
+                    {
+                      applications.filter(
+                        (app) => app.status === 'PENDING_REVIEW'
+                      ).length
+                    }{' '}
+                    applications
                   </p>
                 </div>
                 <ChevronRightIcon className="h-5 w-5 text-gray-400 ml-auto" />
@@ -592,9 +637,15 @@ function RMDashboard() {
               <button className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors">
                 <ExclamationTriangleIcon className="h-6 w-6 text-orange-500 mr-3" />
                 <div className="text-left">
-                  <p className="text-sm font-medium text-gray-900">High Priority</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    High Priority
+                  </p>
                   <p className="text-xs text-gray-500">
-                    {applications.filter(app => app.priority === 'HIGH').length} applications
+                    {
+                      applications.filter((app) => app.priority === 'HIGH')
+                        .length
+                    }{' '}
+                    applications
                   </p>
                 </div>
                 <ChevronRightIcon className="h-5 w-5 text-gray-400 ml-auto" />
@@ -605,10 +656,15 @@ function RMDashboard() {
                 <div className="text-left">
                   <p className="text-sm font-medium text-gray-900">Due Today</p>
                   <p className="text-xs text-gray-500">
-                    {applications.filter(app => 
-                      app.estimatedDecision && 
-                      app.estimatedDecision.toDateString() === new Date().toDateString()
-                    ).length} applications
+                    {
+                      applications.filter(
+                        (app) =>
+                          app.estimatedDecision &&
+                          app.estimatedDecision.toDateString() ===
+                            new Date().toDateString()
+                      ).length
+                    }{' '}
+                    applications
                   </p>
                 </div>
                 <ChevronRightIcon className="h-5 w-5 text-gray-400 ml-auto" />

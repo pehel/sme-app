@@ -329,10 +329,6 @@ function DocumentUploadSimplified() {
         <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
           Document Upload
         </h1>
-        <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Upload your business documents for AI-powered analysis and instant
-          processing.
-        </p>
 
         <div className="mt-6 flex justify-center">
           <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
@@ -340,36 +336,6 @@ function DocumentUploadSimplified() {
               Progress: {uploadedCount} of {requiredCount} required documents
               uploaded
             </span>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Processing Info */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
-        <div className="flex items-start space-x-3">
-          <SparklesIcon className="h-6 w-6 text-purple-600 mt-1" />
-          <div>
-            <h3 className="text-lg font-medium text-purple-800 mb-2">
-              AI-Powered Document Processing
-            </h3>
-            <div className="text-sm text-purple-700 space-y-1">
-              <p>
-                • <strong>Instant Analysis:</strong> Documents are analyzed
-                immediately upon upload
-              </p>
-              <p>
-                • <strong>Key Information Extraction:</strong> Important
-                financial metrics and data are automatically identified
-              </p>
-              <p>
-                • <strong>Compliance Checking:</strong> Documents are verified
-                against regulatory requirements
-              </p>
-              <p>
-                • <strong>Risk Assessment:</strong> AI evaluates
-                creditworthiness and application strength
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ import {
   ChartBarIcon,
   DocumentTextIcon,
   ExclamationTriangleIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 
 function AdminDashboard() {
@@ -44,11 +44,15 @@ function AdminDashboard() {
             assignedCustomers: 45,
             completedApplications: 23,
             pendingApplications: 8,
-            accessScope: ['SME_APPLICATIONS', 'CUSTOMER_DATA', 'DECISION_MAKING']
+            accessScope: [
+              'SME_APPLICATIONS',
+              'CUSTOMER_DATA',
+              'DECISION_MAKING',
+            ],
           },
           {
             id: 'RM002',
-            name: 'Michael O\'Brien',
+            name: "Michael O'Brien",
             email: 'michael.obrien@bank.ie',
             role: 'RM',
             status: 'ACTIVE',
@@ -57,7 +61,11 @@ function AdminDashboard() {
             assignedCustomers: 38,
             completedApplications: 19,
             pendingApplications: 6,
-            accessScope: ['SME_APPLICATIONS', 'CUSTOMER_DATA', 'DECISION_MAKING']
+            accessScope: [
+              'SME_APPLICATIONS',
+              'CUSTOMER_DATA',
+              'DECISION_MAKING',
+            ],
           },
           {
             id: 'RM003',
@@ -70,7 +78,7 @@ function AdminDashboard() {
             assignedCustomers: 0,
             completedApplications: 15,
             pendingApplications: 0,
-            accessScope: ['SME_APPLICATIONS', 'CUSTOMER_DATA']
+            accessScope: ['SME_APPLICATIONS', 'CUSTOMER_DATA'],
           },
           {
             id: 'ADM001',
@@ -83,29 +91,29 @@ function AdminDashboard() {
             assignedCustomers: 0,
             completedApplications: 0,
             pendingApplications: 0,
-            accessScope: ['FULL_ACCESS', 'USER_MANAGEMENT', 'SYSTEM_CONFIG']
-          }
+            accessScope: ['FULL_ACCESS', 'USER_MANAGEMENT', 'SYSTEM_CONFIG'],
+          },
         ];
 
         const mockApplications = [
           {
             id: 'APP-2024-001',
-            customerName: 'John Smith',
+            customerName: 'Joe Bloggs',
             businessName: 'Tech Solutions Ltd',
             assignedRM: 'Sarah Johnson',
             status: 'PENDING_REVIEW',
             submittedAt: new Date('2024-01-15'),
-            totalAmount: 75000
+            totalAmount: 75000,
           },
           {
             id: 'APP-2024-002',
-            customerName: 'Sarah O\'Connor',
+            customerName: "Sarah O'Connor",
             businessName: 'Green Energy Solutions',
-            assignedRM: 'Michael O\'Brien',
+            assignedRM: "Michael O'Brien",
             status: 'APPROVED',
             submittedAt: new Date('2024-01-14'),
-            totalAmount: 150000
-          }
+            totalAmount: 150000,
+          },
         ];
 
         setUsers(mockUsers);
@@ -117,10 +125,11 @@ function AdminDashboard() {
     loadData();
   }, []);
 
-  const filteredUsers = users.filter(u => {
-    const matchesSearch = u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         u.id.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch =
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'ALL' || u.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -163,16 +172,18 @@ function AdminDashboard() {
 
   const handleDeleteUser = (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(u => u.id !== userId));
+      setUsers(users.filter((u) => u.id !== userId));
     }
   };
 
   const handleToggleUserStatus = (userId) => {
-    setUsers(users.map(u => 
-      u.id === userId 
-        ? { ...u, status: u.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }
-        : u
-    ));
+    setUsers(
+      users.map((u) =>
+        u.id === userId
+          ? { ...u, status: u.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }
+          : u
+      )
+    );
   };
 
   const handleLogout = () => {
@@ -186,14 +197,14 @@ function AdminDashboard() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(date);
   };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IE', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
     }).format(amount);
   };
 
@@ -217,13 +228,17 @@ function AdminDashboard() {
             <div className="flex items-center">
               <ShieldCheckIcon className="h-8 w-8 text-purple-600 mr-3" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Admin Dashboard
+                </h1>
                 <p className="text-sm text-gray-600">System Administration</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.name}
+                </p>
                 <p className="text-xs text-gray-500">System Administrator</p>
               </div>
               <button
@@ -273,7 +288,11 @@ function AdminDashboard() {
                         Active RMs
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {users.filter(u => u.role === 'RM' && u.status === 'ACTIVE').length}
+                        {
+                          users.filter(
+                            (u) => u.role === 'RM' && u.status === 'ACTIVE'
+                          ).length
+                        }
                       </dd>
                     </dl>
                   </div>
@@ -420,19 +439,34 @@ function AdminDashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         User
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Role
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Status
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Last Login
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Performance
                       </th>
                       <th scope="col" className="relative px-6 py-3">
@@ -464,12 +498,20 @@ function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(
+                              user.role
+                            )}`}
+                          >
                             {user.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                              user.status
+                            )}`}
+                          >
                             {user.status}
                           </span>
                         </td>
@@ -504,10 +546,22 @@ function AdminDashboard() {
                             </button>
                             <button
                               onClick={() => handleToggleUserStatus(user.id)}
-                              className={`${user.status === 'ACTIVE' ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'}`}
-                              title={user.status === 'ACTIVE' ? 'Deactivate user' : 'Activate user'}
+                              className={`${
+                                user.status === 'ACTIVE'
+                                  ? 'text-red-600 hover:text-red-900'
+                                  : 'text-green-600 hover:text-green-900'
+                              }`}
+                              title={
+                                user.status === 'ACTIVE'
+                                  ? 'Deactivate user'
+                                  : 'Activate user'
+                              }
                             >
-                              {user.status === 'ACTIVE' ? <XMarkIcon className="h-4 w-4" /> : <CheckCircleIcon className="h-4 w-4" />}
+                              {user.status === 'ACTIVE' ? (
+                                <XMarkIcon className="h-4 w-4" />
+                              ) : (
+                                <CheckCircleIcon className="h-4 w-4" />
+                              )}
                             </button>
                             <button
                               onClick={() => handleDeleteUser(user.id)}
@@ -527,7 +581,9 @@ function AdminDashboard() {
               {filteredUsers.length === 0 && (
                 <div className="text-center py-12">
                   <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    No users found
+                  </h3>
                   <p className="mt-1 text-sm text-gray-500">
                     Try adjusting your search criteria or filters.
                   </p>
@@ -564,7 +620,12 @@ function AdminDashboard() {
                       Total Value
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {formatCurrency(applications.reduce((sum, app) => sum + app.totalAmount, 0))}
+                      {formatCurrency(
+                        applications.reduce(
+                          (sum, app) => sum + app.totalAmount,
+                          0
+                        )
+                      )}
                     </dd>
                   </div>
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -572,7 +633,11 @@ function AdminDashboard() {
                       Pending Review
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {applications.filter(app => app.status === 'PENDING_REVIEW').length}
+                      {
+                        applications.filter(
+                          (app) => app.status === 'PENDING_REVIEW'
+                        ).length
+                      }
                     </dd>
                   </div>
                   <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -580,7 +645,10 @@ function AdminDashboard() {
                       Approved This Month
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {applications.filter(app => app.status === 'APPROVED').length}
+                      {
+                        applications.filter((app) => app.status === 'APPROVED')
+                          .length
+                      }
                     </dd>
                   </div>
                 </dl>
@@ -607,32 +675,48 @@ function AdminDashboard() {
                     <div className="flex items-center p-4 border border-gray-200 rounded-lg">
                       <KeyIcon className="h-8 w-8 text-purple-600 mr-4" />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Security Settings</h4>
-                        <p className="text-xs text-gray-500">Configure MFA, password policies</p>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Security Settings
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          Configure MFA, password policies
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-center p-4 border border-gray-200 rounded-lg">
                       <Cog6ToothIcon className="h-8 w-8 text-purple-600 mr-4" />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Application Settings</h4>
-                        <p className="text-xs text-gray-500">Configure application workflows</p>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Application Settings
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          Configure application workflows
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-center p-4 border border-gray-200 rounded-lg">
                       <ExclamationTriangleIcon className="h-8 w-8 text-purple-600 mr-4" />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">System Monitoring</h4>
-                        <p className="text-xs text-gray-500">View system health and logs</p>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          System Monitoring
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          View system health and logs
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-center p-4 border border-gray-200 rounded-lg">
                       <BuildingOfficeIcon className="h-8 w-8 text-purple-600 mr-4" />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Bank Configuration</h4>
-                        <p className="text-xs text-gray-500">Configure bank-specific settings</p>
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Bank Configuration
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          Configure bank-specific settings
+                        </p>
                       </div>
                     </div>
                   </div>

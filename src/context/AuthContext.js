@@ -15,7 +15,7 @@ const MOCK_USERS = {
     email: 'customer@test.com',
     password: 'smebanking', // In real app, this would be hashed
     role: USER_ROLES.CUSTOMER,
-    name: 'John Smith',
+    name: 'Joe Bloggs',
     businessName: 'TechGreen Solutions',
     phone: '+353-87-123-4567',
     isExistingCustomer: true,

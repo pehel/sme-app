@@ -28,7 +28,7 @@ function ApplicationView() {
       productType: 'term-loan',
       amountRequested: 150000,
       businessName: user?.businessName || 'TechGreen Solutions',
-      applicantName: user?.name || 'John Smith',
+      applicantName: user?.name || 'Joe Bloggs',
       submittedDate: '2024-07-20',
       lastUpdated: '2024-07-22',
       steps: [
