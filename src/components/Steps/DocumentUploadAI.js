@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApplication, applicationActions } from '../../context/ApplicationContext';
+import {
+  useApplication,
+  applicationActions,
+} from '../../context/ApplicationContext';
 import aiService from '../../services/aiService';
-import { 
-  DocumentIcon, 
-  CloudArrowUpIcon, 
+import {
+  DocumentIcon,
+  CloudArrowUpIcon,
   CheckCircleIcon,
   XCircleIcon,
   EyeIcon,
@@ -12,7 +15,7 @@ import {
   DocumentMagnifyingGlassIcon,
   ExclamationTriangleIcon,
   ArrowRightIcon,
-  BeakerIcon
+  BeakerIcon,
 } from '@heroicons/react/24/outline';
 
 // Document types based on applicant type and products
@@ -21,12 +24,12 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
     {
       id: 'identity-verification',
       name: 'Identity Verification',
-      description: 'Passport or Driver\'s License',
+      description: "Passport or Driver's License",
       required: true,
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
       maxSize: '10MB',
       aiCapable: true,
-      aiDescription: 'AI will extract your personal details automatically'
+      aiDescription: 'AI will extract your personal details automatically',
     },
     {
       id: 'address-verification',
@@ -36,38 +39,34 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       acceptedTypes: '.pdf,.jpg,.jpeg,.png',
       maxSize: '10MB',
       aiCapable: true,
-      aiDescription: 'AI will verify your address and extract details'
-    }
+      aiDescription: 'AI will verify your address and extract details',
+    },
   ];
 
   const businessDocuments = [];
-  
+
   if (applicantType === 'sole-trader') {
-    businessDocuments.push(
-      {
-        id: 'business-registration',
-        name: 'Business Registration',
-        description: 'Certificate of Business Name or Trade License',
-        required: true,
-        acceptedTypes: '.pdf,.jpg,.jpeg,.png',
-        maxSize: '10MB',
-        aiCapable: true,
-        aiDescription: 'AI will extract business details and verify registration'
-      }
-    );
+    businessDocuments.push({
+      id: 'business-registration',
+      name: 'Business Registration',
+      description: 'Certificate of Business Name or Trade License',
+      required: true,
+      acceptedTypes: '.pdf,.jpg,.jpeg,.png',
+      maxSize: '10MB',
+      aiCapable: true,
+      aiDescription: 'AI will extract business details and verify registration',
+    });
   } else if (applicantType === 'partnership') {
-    businessDocuments.push(
-      {
-        id: 'partnership-agreement',
-        name: 'Partnership Agreement',
-        description: 'Legal Partnership Agreement or Deed',
-        required: true,
-        acceptedTypes: '.pdf,.doc,.docx',
-        maxSize: '15MB',
-        aiCapable: true,
-        aiDescription: 'AI will extract partner details and ownership structure'
-      }
-    );
+    businessDocuments.push({
+      id: 'partnership-agreement',
+      name: 'Partnership Agreement',
+      description: 'Legal Partnership Agreement or Deed',
+      required: true,
+      acceptedTypes: '.pdf,.doc,.docx',
+      maxSize: '15MB',
+      aiCapable: true,
+      aiDescription: 'AI will extract partner details and ownership structure',
+    });
   } else if (applicantType === 'limited-company') {
     businessDocuments.push(
       {
@@ -78,7 +77,7 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
         acceptedTypes: '.pdf,.jpg,.jpeg,.png',
         maxSize: '10MB',
         aiCapable: true,
-        aiDescription: 'AI will auto-fill company details from CRO data'
+        aiDescription: 'AI will auto-fill company details from CRO data',
       },
       {
         id: 'directors-details',
@@ -88,7 +87,8 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
         acceptedTypes: '.pdf,.doc,.docx',
         maxSize: '10MB',
         aiCapable: true,
-        aiDescription: 'AI will extract director information and ownership percentages'
+        aiDescription:
+          'AI will extract director information and ownership percentages',
       }
     );
   }
@@ -103,21 +103,23 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       acceptedTypes: '.pdf,.csv,.xlsx',
       maxSize: '20MB',
       aiCapable: true,
-      aiDescription: 'AI will analyze cash flow, income patterns, and financial health'
+      aiDescription:
+        'AI will analyze cash flow, income patterns, and financial health',
     },
     {
       id: 'financial-statements',
       name: 'Financial Statements',
       description: 'Latest audited accounts or management accounts',
-      required: selectedProducts.some(p => p.amount > 50000),
+      required: selectedProducts.some((p) => p.amount > 50000),
       acceptedTypes: '.pdf,.xlsx,.xls',
       maxSize: '15MB',
       aiCapable: true,
-      aiDescription: 'AI will extract key financial ratios and performance metrics'
-    }
+      aiDescription:
+        'AI will extract key financial ratios and performance metrics',
+    },
   ];
 
-  if (selectedProducts.some(p => p.type === 'invoice-financing')) {
+  if (selectedProducts.some((p) => p.type === 'invoice-financing')) {
     financialDocuments.push({
       id: 'accounts-receivable',
       name: 'Accounts Receivable',
@@ -126,7 +128,8 @@ const getRequiredDocuments = (applicantType, selectedProducts) => {
       acceptedTypes: '.pdf,.xlsx,.csv',
       maxSize: '10MB',
       aiCapable: true,
-      aiDescription: 'AI will assess invoice quality and collection probability'
+      aiDescription:
+        'AI will assess invoice quality and collection probability',
     });
   }
 
@@ -143,8 +146,11 @@ function DocumentUpload() {
   const [extractedData, setExtractedData] = useState({});
   const [errors, setErrors] = useState({});
   const [showPreview, setShowPreview] = useState({});
-  
-  const requiredDocuments = getRequiredDocuments(state.applicantType, state.selectedProducts);
+
+  const requiredDocuments = getRequiredDocuments(
+    state.applicantType,
+    state.selectedProducts
+  );
 
   useEffect(() => {
     // Load previously uploaded documents
@@ -153,97 +159,106 @@ function DocumentUpload() {
     }
   }, [state.documents]);
 
-  const analyzeDocument = useCallback(async (documentId, file) => {
-    setIsAnalyzing(prev => ({ ...prev, [documentId]: true }));
-    
-    try {
-      // Determine document type for AI analysis
-      const docType = getDocumentType(documentId);
-      const analysis = await aiService.analyzeDocument(file, docType);
-      
-      setAiAnalysis(prev => ({ ...prev, [documentId]: analysis }));
-      setExtractedData(prev => ({ ...prev, [documentId]: analysis.extracted }));
-      
-      // Update document status
-      setDocuments(prev => ({
-        ...prev,
-        [documentId]: {
-          ...prev[documentId],
-          status: 'analyzed',
-          aiAnalysis: analysis,
-          confidence: analysis.confidence
-        }
-      }));
+  const analyzeDocument = useCallback(
+    async (documentId, file) => {
+      setIsAnalyzing((prev) => ({ ...prev, [documentId]: true }));
 
-      // Auto-fill form data if available
-      if (analysis.extracted && documentId === 'bank-statements') {
-        // Auto-fill application details from bank statement analysis
-        const bankData = await aiService.analyzeBankStatement(file);
-        dispatch(applicationActions.updateApplicationFromAI(bankData));
+      try {
+        // Determine document type for AI analysis
+        const docType = getDocumentType(documentId);
+        const analysis = await aiService.analyzeDocument(file, docType);
+
+        setAiAnalysis((prev) => ({ ...prev, [documentId]: analysis }));
+        setExtractedData((prev) => ({
+          ...prev,
+          [documentId]: analysis.extracted,
+        }));
+
+        // Update document status
+        setDocuments((prev) => ({
+          ...prev,
+          [documentId]: {
+            ...prev[documentId],
+            status: 'analyzed',
+            aiAnalysis: analysis,
+            confidence: analysis.confidence,
+          },
+        }));
+
+        // Auto-fill form data if available
+        if (analysis.extracted && documentId === 'bank-statements') {
+          // Auto-fill application details from bank statement analysis
+          const bankData = await aiService.analyzeBankStatement(file);
+          dispatch(applicationActions.updateApplicationFromAI(bankData));
+        }
+      } catch (error) {
+        console.error('AI analysis failed:', error);
+        setErrors((prev) => ({
+          ...prev,
+          [documentId]:
+            'AI analysis failed. Document uploaded but not analyzed.',
+        }));
       }
 
-    } catch (error) {
-      console.error('AI analysis failed:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        [documentId]: 'AI analysis failed. Document uploaded but not analyzed.' 
-      }));
-    }
-    
-    setIsAnalyzing(prev => ({ ...prev, [documentId]: false }));
-  }, [dispatch]);
+      setIsAnalyzing((prev) => ({ ...prev, [documentId]: false }));
+    },
+    [dispatch]
+  );
 
-  const onDrop = useCallback(async (acceptedFiles, rejectedFiles, documentId) => {
-    // Handle rejected files
-    if (rejectedFiles.length > 0) {
-      const newErrors = { ...errors };
-      rejectedFiles.forEach(({ file, errors: fileErrors }) => {
-        newErrors[documentId] = fileErrors.map(e => e.message).join(', ');
-      });
-      setErrors(newErrors);
-      return;
-    }
+  const onDrop = useCallback(
+    async (acceptedFiles, rejectedFiles, documentId) => {
+      // Handle rejected files
+      if (rejectedFiles.length > 0) {
+        const newErrors = { ...errors };
+        rejectedFiles.forEach(({ file, errors: fileErrors }) => {
+          newErrors[documentId] = fileErrors.map((e) => e.message).join(', ');
+        });
+        setErrors(newErrors);
+        return;
+      }
 
-    const file = acceptedFiles[0];
-    if (!file) return;
+      const file = acceptedFiles[0];
+      if (!file) return;
 
-    // Clear any previous errors
-    setErrors(prev => ({ ...prev, [documentId]: null }));
+      // Clear any previous errors
+      setErrors((prev) => ({ ...prev, [documentId]: null }));
 
-    // Simulate file upload with progress
-    setUploadProgress(prev => ({ ...prev, [documentId]: 0 }));
-    
-    const uploadInterval = setInterval(() => {
-      setUploadProgress(prev => {
-        const currentProgress = prev[documentId] || 0;
-        if (currentProgress >= 100) {
-          clearInterval(uploadInterval);
-          return prev;
-        }
-        return { ...prev, [documentId]: currentProgress + 10 };
-      });
-    }, 100);
+      // Simulate file upload with progress
+      setUploadProgress((prev) => ({ ...prev, [documentId]: 0 }));
 
-    // Store file info
-    setTimeout(() => {
-      const fileInfo = {
-        id: documentId,
-        file: file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString(),
-        status: 'uploaded'
-      };
-      
-      setDocuments(prev => ({ ...prev, [documentId]: fileInfo }));
-      clearInterval(uploadInterval);
-      setUploadProgress(prev => ({ ...prev, [documentId]: 100 }));
-      
-      // Start AI analysis
-      analyzeDocument(documentId, file);
-    }, 1500);
-  }, [errors, analyzeDocument]);
+      const uploadInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          const currentProgress = prev[documentId] || 0;
+          if (currentProgress >= 100) {
+            clearInterval(uploadInterval);
+            return prev;
+          }
+          return { ...prev, [documentId]: currentProgress + 10 };
+        });
+      }, 100);
+
+      // Store file info
+      setTimeout(() => {
+        const fileInfo = {
+          id: documentId,
+          file: file,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          uploadedAt: new Date().toISOString(),
+          status: 'uploaded',
+        };
+
+        setDocuments((prev) => ({ ...prev, [documentId]: fileInfo }));
+        clearInterval(uploadInterval);
+        setUploadProgress((prev) => ({ ...prev, [documentId]: 100 }));
+
+        // Start AI analysis
+        analyzeDocument(documentId, file);
+      }, 1500);
+    },
+    [errors, analyzeDocument]
+  );
 
   const getDocumentType = (documentId) => {
     const typeMap = {
@@ -253,35 +268,35 @@ function DocumentUpload() {
       'financial-statements': 'financial',
       'certificate-incorporation': 'legal',
       'partnership-agreement': 'legal',
-      'directors-details': 'legal'
+      'directors-details': 'legal',
     };
     return typeMap[documentId] || 'identity';
   };
 
   const removeDocument = (documentId) => {
-    setDocuments(prev => {
+    setDocuments((prev) => {
       const newDocs = { ...prev };
       delete newDocs[documentId];
       return newDocs;
     });
-    setAiAnalysis(prev => {
+    setAiAnalysis((prev) => {
       const newAnalysis = { ...prev };
       delete newAnalysis[documentId];
       return newAnalysis;
     });
-    setExtractedData(prev => {
+    setExtractedData((prev) => {
       const newData = { ...prev };
       delete newData[documentId];
       return newData;
     });
-    setErrors(prev => ({ ...prev, [documentId]: null }));
+    setErrors((prev) => ({ ...prev, [documentId]: null }));
   };
 
   const validateDocuments = () => {
     const newErrors = {};
-    const requiredDocs = requiredDocuments.filter(doc => doc.required);
-    
-    requiredDocs.forEach(doc => {
+    const requiredDocs = requiredDocuments.filter((doc) => doc.required);
+
+    requiredDocs.forEach((doc) => {
       if (!documents[doc.id]) {
         newErrors[doc.id] = `${doc.name} is required`;
       }
@@ -294,26 +309,33 @@ function DocumentUpload() {
   const handleContinue = () => {
     if (validateDocuments()) {
       // Convert documents object to array for context storage
-      const documentsArray = Object.entries(documents).map(([documentType, documentData]) => ({
-        id: documentData.id || documentType,
-        documentType,
-        fileName: documentData.file?.name || documentData.fileName,
-        fileType: documentData.file?.type || documentData.fileType,
-        fileSize: documentData.file?.size || documentData.fileSize,
-        uploadedAt: documentData.uploadedAt || new Date().toISOString(),
-        status: documentData.status || 'uploaded',
-        aiAnalysis: documentData.aiAnalysis,
-        confidence: documentData.confidence
-      }));
+      const documentsArray = Object.entries(documents).map(
+        ([documentType, documentData]) => ({
+          id: documentData.id || documentType,
+          documentType,
+          fileName: documentData.file?.name || documentData.fileName,
+          fileType: documentData.file?.type || documentData.fileType,
+          fileSize: documentData.file?.size || documentData.fileSize,
+          uploadedAt: documentData.uploadedAt || new Date().toISOString(),
+          status: documentData.status || 'uploaded',
+          aiAnalysis: documentData.aiAnalysis,
+          confidence: documentData.confidence,
+        })
+      );
 
-      dispatch(applicationActions.updateDocuments({
-        documents: documentsArray,
-        aiAnalysis,
-        extractedData
-      }));
+      dispatch(
+        applicationActions.updateDocuments({
+          documents: documentsArray,
+          aiAnalysis,
+          extractedData,
+        })
+      );
 
       // Check if multi-party verification is needed
-      if (state.applicantType === 'partnership' || state.applicantType === 'limited-company') {
+      if (
+        state.applicantType === 'partnership' ||
+        state.applicantType === 'limited-company'
+      ) {
         navigate('/multi-party-verification');
       } else {
         navigate('/review-decision');
@@ -326,7 +348,7 @@ function DocumentUpload() {
   };
 
   const getRequiredCount = () => {
-    return requiredDocuments.filter(doc => doc.required).length;
+    return requiredDocuments.filter((doc) => doc.required).length;
   };
 
   const DocumentCard = ({ doc }) => {
@@ -353,7 +375,9 @@ function DocumentUpload() {
             </div>
             <p className="text-sm text-gray-600 mt-1">{doc.description}</p>
             {doc.aiCapable && (
-              <p className="text-xs text-blue-600 mt-1 italic">{doc.aiDescription}</p>
+              <p className="text-xs text-blue-600 mt-1 italic">
+                {doc.aiDescription}
+              </p>
             )}
             <p className="text-xs text-gray-500 mt-1">
               Max size: {doc.maxSize} | Formats: {doc.acceptedTypes}
@@ -369,7 +393,8 @@ function DocumentUpload() {
           >
             <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
             <p className="mt-2 text-sm text-gray-600">
-              <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
+              <span className="font-medium text-blue-600">Click to upload</span>{' '}
+              or drag and drop
             </p>
             <input
               id={`file-${doc.id}`}
@@ -392,7 +417,7 @@ function DocumentUpload() {
               <span className="text-sm text-gray-600">{progress}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
+              <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
@@ -414,11 +439,18 @@ function DocumentUpload() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <CheckCircleIcon className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium text-green-800">{uploaded.name}</span>
+                <span className="text-sm font-medium text-green-800">
+                  {uploaded.name}
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => setShowPreview(prev => ({ ...prev, [doc.id]: !prev[doc.id] }))}
+                  onClick={() =>
+                    setShowPreview((prev) => ({
+                      ...prev,
+                      [doc.id]: !prev[doc.id],
+                    }))
+                  }
                   className="text-green-600 hover:text-green-700"
                 >
                   <EyeIcon className="h-4 w-4" />
@@ -437,23 +469,31 @@ function DocumentUpload() {
               <div className="bg-white rounded-lg p-3 border">
                 <div className="flex items-center space-x-2 mb-2">
                   <DocumentMagnifyingGlassIcon className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-900">AI Analysis Complete</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    AI Analysis Complete
+                  </span>
                   <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                     {Math.round(analysis.confidence * 100)}% confidence
                   </span>
                 </div>
-                
+
                 {analysis.extracted && (
                   <div className="space-y-1 text-xs text-gray-600">
-                    {Object.entries(analysis.extracted).slice(0, 3).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                        <span className="font-medium">{String(value).slice(0, 30)}</span>
-                      </div>
-                    ))}
+                    {Object.entries(analysis.extracted)
+                      .slice(0, 3)
+                      .map(([key, value]) => (
+                        <div key={key} className="flex justify-between">
+                          <span className="capitalize">
+                            {key.replace(/([A-Z])/g, ' $1')}:
+                          </span>
+                          <span className="font-medium">
+                            {String(value).slice(0, 30)}
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 )}
-                
+
                 {analysis.insights && (
                   <div className="mt-2 text-xs text-blue-600">
                     <div className="font-medium">AI Insights:</div>
@@ -471,10 +511,20 @@ function DocumentUpload() {
             {showPreview[doc.id] && (
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="text-xs text-gray-600 space-y-1">
-                  <div><strong>File:</strong> {uploaded.name}</div>
-                  <div><strong>Size:</strong> {(uploaded.size / 1024 / 1024).toFixed(2)} MB</div>
-                  <div><strong>Uploaded:</strong> {new Date(uploaded.uploadedAt).toLocaleString()}</div>
-                  <div><strong>Status:</strong> {uploaded.status}</div>
+                  <div>
+                    <strong>File:</strong> {uploaded.name}
+                  </div>
+                  <div>
+                    <strong>Size:</strong>{' '}
+                    {(uploaded.size / 1024 / 1024).toFixed(2)} MB
+                  </div>
+                  <div>
+                    <strong>Uploaded:</strong>{' '}
+                    {new Date(uploaded.uploadedAt).toLocaleString()}
+                  </div>
+                  <div>
+                    <strong>Status:</strong> {uploaded.status}
+                  </div>
                 </div>
               </div>
             )}
@@ -501,7 +551,8 @@ function DocumentUpload() {
           Document Upload
         </h1>
         <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-          Upload your documents and let our AI extract information automatically to speed up your application.
+          Upload your documents and let our AI extract information automatically
+          to speed up your application.
         </p>
       </div>
 
@@ -518,32 +569,24 @@ function DocumentUpload() {
             <div className="text-sm text-blue-600">Required documents</div>
           </div>
         </div>
-        
-        <div className="w-full bg-blue-200 rounded-full h-3">
-          <div 
-            className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${getRequiredCount() > 0 ? (getUploadedCount() / getRequiredCount()) * 100 : 0}%` }}
-          />
-        </div>
-      </div>
 
-      {/* AI Features Banner */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 border">
-        <div className="flex items-center space-x-3">
-          <SparklesIcon className="h-8 w-8 text-purple-600" />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">AI-Powered Document Processing</h3>
-            <p className="text-gray-600">
-              Our AI automatically extracts information from your documents, validates authenticity, 
-              and pre-fills your application to save time and reduce errors.
-            </p>
-          </div>
+        <div className="w-full bg-blue-200 rounded-full h-3">
+          <div
+            className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+            style={{
+              width: `${
+                getRequiredCount() > 0
+                  ? (getUploadedCount() / getRequiredCount()) * 100
+                  : 0
+              }%`,
+            }}
+          />
         </div>
       </div>
 
       {/* Document Cards */}
       <div className="space-y-6">
-        {requiredDocuments.map(doc => (
+        {requiredDocuments.map((doc) => (
           <DocumentCard key={doc.id} doc={doc} />
         ))}
       </div>
@@ -559,14 +602,25 @@ function DocumentUpload() {
             {Object.entries(extractedData).map(([docId, data]) => (
               <div key={docId} className="bg-white rounded-lg p-3">
                 <div className="font-medium text-gray-900 mb-2">
-                  {requiredDocuments.find(d => d.id === docId)?.name}
+                  {requiredDocuments.find((d) => d.id === docId)?.name}
                 </div>
-                {data && typeof data === 'object' && Object.entries(data).slice(0, 3).map(([key, value]) => (
-                  <div key={key} className="flex justify-between text-gray-600">
-                    <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                    <span className="font-medium">{String(value).slice(0, 25)}</span>
-                  </div>
-                ))}
+                {data &&
+                  typeof data === 'object' &&
+                  Object.entries(data)
+                    .slice(0, 3)
+                    .map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between text-gray-600"
+                      >
+                        <span className="capitalize">
+                          {key.replace(/([A-Z])/g, ' $1')}:
+                        </span>
+                        <span className="font-medium">
+                          {String(value).slice(0, 25)}
+                        </span>
+                      </div>
+                    ))}
               </div>
             ))}
           </div>
@@ -597,11 +651,22 @@ function DocumentUpload() {
           Document Requirements & AI Processing
         </h3>
         <ul className="text-sm text-amber-700 space-y-1">
-          <li>• All documents must be clear, complete, and recent (within specified timeframes)</li>
+          <li>
+            • All documents must be clear, complete, and recent (within
+            specified timeframes)
+          </li>
           <li>• AI analysis typically takes 30-60 seconds per document</li>
-          <li>• Extracted information will be pre-filled in your application for verification</li>
-          <li>• Documents are encrypted and stored securely in compliance with GDPR</li>
-          <li>• You can review and edit AI-extracted information before submission</li>
+          <li>
+            • Extracted information will be pre-filled in your application for
+            verification
+          </li>
+          <li>
+            • Documents are encrypted and stored securely in compliance with
+            GDPR
+          </li>
+          <li>
+            • You can review and edit AI-extracted information before submission
+          </li>
         </ul>
       </div>
     </div>

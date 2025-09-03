@@ -13,9 +13,9 @@ const MOCK_USERS = {
   'customer@test.com': {
     id: 'cust_001',
     email: 'customer@test.com',
-    password: 'password', // In real app, this would be hashed
+    password: 'smebanking', // In real app, this would be hashed
     role: USER_ROLES.CUSTOMER,
-    name: 'John Smith',
+    name: 'Joe Bloggs',
     businessName: 'TechGreen Solutions',
     phone: '+353-87-123-4567',
     isExistingCustomer: true,
@@ -72,7 +72,7 @@ const MOCK_USERS = {
   'newcustomer@test.com': {
     id: 'cust_002',
     email: 'newcustomer@test.com',
-    password: 'password',
+    password: 'smebanking',
     role: USER_ROLES.CUSTOMER,
     name: 'Sarah Johnson',
     businessName: 'Green Energy Ltd',
@@ -132,7 +132,7 @@ const MOCK_USERS = {
   'rm@bank.com': {
     id: 'rm_001',
     email: 'rm@bank.com',
-    password: 'pass',
+    password: 'smebanking',
     role: USER_ROLES.RM,
     name: "Michael O'Connor",
     phone: '+353-85-111-2222',
@@ -147,7 +147,7 @@ const MOCK_USERS = {
   'rm2@bank.com': {
     id: 'rm_002',
     email: 'rm2@bank.com',
-    password: 'pass',
+    password: 'smebanking',
     role: USER_ROLES.RM,
     name: 'Lisa Murphy',
     phone: '+353-85-333-4444',
@@ -163,7 +163,7 @@ const MOCK_USERS = {
   'admin@bank.com': {
     id: 'admin_001',
     email: 'admin@bank.com',
-    password: 'adminpass123',
+    password: 'smebanking',
     role: USER_ROLES.SUPERUSER,
     name: 'David Walsh',
     phone: '+353-85-555-6666',

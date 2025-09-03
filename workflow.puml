@@ -1,0 +1,51 @@
+@startuml
+title SME Lending – Director Not a Portal User (Digital Signing Sequence)
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+skinparam ArrowColor Black
+
+actor Staff as S
+participant "Company Portal\n(Staff UI)" as CP
+participant "Orchestration\n(Service/API)" as ORCH
+database "CRO/Registry" as CRO
+participant "eSign Provider\n(QES/eIDAS)" as ESIGN
+participant "Bank Intake\n(Underwriting API)" as BANK
+
+S -> CP: Login & create draft
+CP -> ORCH: CreateDraft(appData, companyId)
+ORCH -> ORCH: Validate draft (KYC/KYB, completeness)
+ORCH -> CRO: GetDirectors(companyId)
+CRO --> ORCH: Directors list
+
+ORCH -> ORCH: Check policy\n(min signatures by amount/mandate)
+alt Approval required
+  ORCH -> ESIGN: CreateSigningEnvelope(directors, appSummary, expiry=7d)
+  ESIGN --> ORCH: EnvelopeId + per-director links
+  ORCH -> CP: Status=Awaiting Director Signatures
+  ORCH -> Directors: Notify via email/SMS with secure links
+
+  loop For each Director (parallel)
+    Director -> ESIGN: Open link
+    ESIGN -> Director: eID&V / SCA
+    Director -> ESIGN: Review & Sign (QES)
+    ESIGN -> ORCH: SignatureRecorded(directorId, envelopeId, certRefs)
+  end
+
+  ORCH -> ORCH: Count signatures\n>= policy.minSignaturesFor(amount)?
+  alt Enough signatures
+    ORCH -> BANK: SubmitApplication(appPackage, signedArtifacts)
+    BANK --> ORCH: Intake ACK / CaseId
+    ORCH -> CP: Status=Submitted(CaseId)
+    ORCH -> ORCH: Immutable audit log\n(who created, who signed, timestamps, IP,\ncert chain refs, payload hash)
+  else Not enough by expiry
+    ESIGN -> ORCH: EnvelopeExpired
+    ORCH -> CP: Notify Staff – Expired/Insufficient Signatures
+  end
+else Approval not required
+  ORCH -> BANK: SubmitApplication(appPackage)
+  BANK --> ORCH: Intake ACK / CaseId
+  ORCH -> CP: Status=Submitted(CaseId)
+  ORCH -> ORCH: Immutable audit log
+end
+@enduml
