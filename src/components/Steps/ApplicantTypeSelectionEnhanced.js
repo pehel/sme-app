@@ -247,6 +247,31 @@ function ApplicantTypeSelectionEnhanced() {
         </p>
       </div>
 
+      {/* Pre-selected Products Display */}
+      {state.selectedProducts && state.selectedProducts.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-center justify-center mb-4">
+            <CheckIcon className="h-6 w-6 text-blue-600 mr-2" />
+            <h3 className="text-lg font-semibold text-blue-900">
+              Selected Products ({state.selectedProducts.length})
+            </h3>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {state.selectedProducts.map((productId, index) => (
+              <span 
+                key={index}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+              >
+                {productId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              </span>
+            ))}
+          </div>
+          <p className="text-center text-sm text-blue-700 mt-3">
+            Continue with your application for the products you selected
+          </p>
+        </div>
+      )}
+
       {/* AI Quick Selection */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
         <div className="text-center mb-4">

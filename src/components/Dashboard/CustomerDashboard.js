@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useApplication } from '../../context/ApplicationContext';
+import NavigationHeader from '../Layout/NavigationHeader';
 import {
-  BuildingOfficeIcon,
   ClockIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -19,8 +18,7 @@ import {
 
 function CustomerDashboard() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { dispatch } = useApplication();
+  const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -140,9 +138,8 @@ function CustomerDashboard() {
   };
 
   const handleStartNewApplication = () => {
-    // Clear any existing application state
-    dispatch({ type: 'RESET_APPLICATION' });
-    navigate('/new-application');
+    // Navigate to product browsing instead of directly to application
+    navigate('/browse-products');
   };
 
   const handleContinueApplication = (application) => {
@@ -158,11 +155,6 @@ function CustomerDashboard() {
 
   const handleViewApplication = (application) => {
     navigate(`/application/${application.id}`);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
   };
 
   const formatCurrency = (amount) => {
@@ -195,36 +187,7 @@ function CustomerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <BuildingOfficeIcon className="h-8 w-8 text-blue-600 mr-3" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  SME Banking Portal
-                </h1>
-                <p className="text-sm text-gray-600">Customer Dashboard</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">
-                  {user?.name}
-                </p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <NavigationHeader />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {/* Welcome Section */}
@@ -506,10 +469,10 @@ function CustomerDashboard() {
                         SME BANKING
                       </h3>
                       <p className="text-gray-600 text-lg mb-4">
-                        Create an application for accessing products
+                        Discover the right financial products for your business
                       </p>
                       <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">
-                        Business loans, Overdraft, Credit Cards.
+                        Browse our product catalog first, then start your application with pre-selected products.
                       </p>
                     </div>
                     <div className="mt-6">
@@ -518,7 +481,7 @@ function CustomerDashboard() {
                         className="inline-flex items-center px-8 py-4 border border-transparent shadow-sm text-lg font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         <PlusIcon className="h-6 w-6 mr-3" />
-                        Start Your First Application
+                        Browse Products & Apply
                       </button>
                     </div>
                     <div className="mt-6 text-sm text-gray-500 space-y-1">

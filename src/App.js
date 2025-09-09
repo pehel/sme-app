@@ -33,6 +33,7 @@ import ReviewDecision from './components/Steps/ReviewDecision';
 import CreditAgreement from './components/Steps/CreditAgreement';
 import Completion from './components/Steps/Completion';
 import DirectorNotification from './components/pages/DirectorNotification';
+import BrowseProducts from './components/pages/BrowseProducts';
 
 // Route Guards
 function ProtectedRoute({ children, allowedRoles = [] }) {
@@ -168,8 +169,8 @@ function AppContent() {
       <Route path="/new-application" element={
         <ProtectedRoute allowedRoles={[USER_ROLES.CUSTOMER]}>
           <Layout>
-            <ProductSelectionEnhanced />
-            <AIAssistant currentStep="business-info" />
+            <ApplicantTypeSelectionEnhanced />
+            <AIAssistant currentStep="applicant-type" />
           </Layout>
         </ProtectedRoute>
       } />
@@ -251,6 +252,11 @@ function AppContent() {
             <DirectorNotification />
             <AIAssistant currentStep="director-notification" />
           </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/browse-products" element={
+        <ProtectedRoute allowedRoles={[USER_ROLES.CUSTOMER]}>
+          <BrowseProducts />
         </ProtectedRoute>
       } />
 
